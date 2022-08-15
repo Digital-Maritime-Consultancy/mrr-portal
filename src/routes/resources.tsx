@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import D3Tree from "../components/d3/d3tree";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO } from "../generated-client";
 
-export default function Resources() {
-  const [resources, setResources] = useState<MaritimeResourceDTO[]>([]);
+export interface IResourcesProp{
+  resources: MaritimeResourceDTO[];
+  onSelect: (mrn: string) => void;
+}
 
-  useEffect(() => {
-    const apiHandler = new MaritimeResourceControllerApi();
-    apiHandler.getAllMaritimeResources()
-      .then((res: any) => res.data)
-      .then((data: MaritimeResourceDTO[]) => setResources(data))
-      .catch(e => alert(e));
-  }, []);
+export default function Resources({resources, onSelect}: IResourcesProp) {
+  
+  const onSelectMrn = async (mrn: string): Promise<void> => {
+    onSelect(mrn);
+  }
   return (
     <div>
-      <D3Tree resource={resources}></D3Tree>
+      <D3Tree resource={resources} onSelect={onSelectMrn}></D3Tree>
     </div>
   )
 }

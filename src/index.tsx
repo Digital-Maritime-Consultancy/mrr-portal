@@ -15,7 +15,6 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} >
-        <Route path="resources" element={<Resources />} />
         <Route path="namespaces" element={<Namespaces />} >
           <Route
             index
@@ -25,7 +24,6 @@ root.render(
               </main>
             }
           />
-          <Route path=":mrn" element={<Namespace />} />
         </Route>
         <Route
           path="*"

@@ -1,18 +1,11 @@
 import { RawNodeDatum } from "react-d3-tree/lib/types/common";
 import { MaritimeResourceDTO } from "../../../generated-client";
 
-export interface ITreeElement{
-    id: number;
-    name: string;
-    attributes: MaritimeResourceDTO;
-    parentId: number | undefined;
-    children?: ITreeElement[];
-  };
-
 const nest = (items: RawNodeDatum[], id:number | undefined = undefined, link = 'parentId'): RawNodeDatum[] =>
   items
     .filter((item: RawNodeDatum) => item.attributes!.parentId === id)
-    .map((item: RawNodeDatum) => ({ ...item, children: nest(items, item.attributes!.id as number) } as RawNodeDatum));
+    .map((item: RawNodeDatum) => ({ ...item, children: nest(items, item.attributes!.id as number) } as RawNodeDatum))
+    .map((item: RawNodeDatum) => ({ ...item, children: item.children?.length ? item.children : undefined } as RawNodeDatum));
 
 
 
@@ -29,6 +22,10 @@ export const generateTree = (data: MaritimeResourceDTO[]): RawNodeDatum[] => {
                         name: s,
                         attributes: {
                             id: tests.length,
+                            mrn: d.mrn!.slice(0,d.mrn!.lastIndexOf(s)+s.length),
+                            title: d.title!,
+                            location: d.location!,
+                            description: d.description!,
                             parentId: !goThrough ? parent[0].attributes!.id : prevIndex
                         }
                     });
@@ -38,6 +35,10 @@ export const generateTree = (data: MaritimeResourceDTO[]): RawNodeDatum[] => {
                     name: s,
                     attributes: {
                         id: tests.length,
+                        mrn: d.mrn!.slice(0,d.mrn!.lastIndexOf(s)+s.length),
+                        title: d.title!,
+                        location: d.location!,
+                        description: d.description!,
                     }});
                 }
             } else {
@@ -47,6 +48,10 @@ export const generateTree = (data: MaritimeResourceDTO[]): RawNodeDatum[] => {
                         attributes: {
                             id: tests.length,
                             parentId: prevIndex,
+                            mrn: d.mrn!.slice(0,d.mrn!.lastIndexOf(s)+s.length),
+                            title: d.title!,
+                            location: d.location!,
+                            description: d.description!,
                         }});
                 }
             }
