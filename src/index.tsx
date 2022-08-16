@@ -5,8 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Namespace from './routes/namespace';
-import Resources from './routes/resources';
+import TreeView from './routes/treeView';
 import Namespaces from './routes/namespaces';
+import SearchView from './routes/searchView';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,16 +16,8 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} >
-        <Route path="namespaces" element={<Namespaces />} >
-          <Route
-            index
-            element={
-              <main style={{ padding: "1rem" }}>
-                <p>Select an invoice</p>
-              </main>
-            }
-          />
-        </Route>
+        <Route path="searchView" element={<SearchView />} />
+        <Route path="treeView" element={<TreeView />} />
         <Route
           path="*"
           element={

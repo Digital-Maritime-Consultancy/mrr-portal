@@ -4,7 +4,7 @@ import './d3.scss';
 import Tree from 'react-d3-tree';
 import { MaritimeResourceDTO } from '../../generated-client';
 import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
-import { generateTree } from './model/TreeElement';
+import { generateTree } from './util/treeGenerator';
 
 const defaultData = {
   name: "urn",
@@ -24,7 +24,7 @@ const defaultData = {
 
 export interface ID3TreeProp{
   resource: MaritimeResourceDTO[];
-  onSelect: (mrn: string) => Promise<void>;
+  onSelect: (mrn: string) => void;
 }
 
 
@@ -40,6 +40,7 @@ export default function D3Tree({
     // `<Tree />` will fill width/height of its container; in this case `#treeWrapper`.
     <div id="treeWrapper" style={{ width: '100%', height: '30em', backgroundColor: '#D8E1E9' }}>
       <Tree data={data.length ? data : defaultData}
+        collapsible={false}
         rootNodeClassName="node__root"
         branchNodeClassName="node__branch"
         leafNodeClassName="node__leaf"

@@ -1,11 +1,17 @@
 .node__root > circle {
-    fill: #7392B7;
+    fill: #b3c4da;
+    stroke: #b3c4da;
   }
   
   .node__branch > circle {
     fill: #C5D5EA;
+    stroke: #C5D5EA;
   }
   
   .node__leaf > circle {
-    fill: #759EB8;
+    fill: #3fbdc6;
+}
+
+.rd3t-label__attributes{
+  fill: #ccc0;
 }

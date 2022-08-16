@@ -23,9 +23,6 @@ export const generateTree = (data: MaritimeResourceDTO[]): RawNodeDatum[] => {
                         attributes: {
                             id: tests.length,
                             mrn: d.mrn!.slice(0,d.mrn!.lastIndexOf(s)+s.length),
-                            title: d.title!,
-                            location: d.location!,
-                            description: d.description!,
                             parentId: !goThrough ? parent[0].attributes!.id : prevIndex
                         }
                     });
@@ -36,9 +33,6 @@ export const generateTree = (data: MaritimeResourceDTO[]): RawNodeDatum[] => {
                     attributes: {
                         id: tests.length,
                         mrn: d.mrn!.slice(0,d.mrn!.lastIndexOf(s)+s.length),
-                        title: d.title!,
-                        location: d.location!,
-                        description: d.description!,
                     }});
                 }
             } else {
@@ -49,9 +43,6 @@ export const generateTree = (data: MaritimeResourceDTO[]): RawNodeDatum[] => {
                             id: tests.length,
                             parentId: prevIndex,
                             mrn: d.mrn!.slice(0,d.mrn!.lastIndexOf(s)+s.length),
-                            title: d.title!,
-                            location: d.location!,
-                            description: d.description!,
                         }});
                 }
             }
