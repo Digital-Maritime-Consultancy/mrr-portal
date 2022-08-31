@@ -34,9 +34,6 @@ export default function SearchView() {
                 value={mrn}
                 onChange={(e) => setMrn(e.target.value)}
               />
-              <Form.Text className="text-muted">
-                Search resources by Maritime Resource Name
-              </Form.Text>
             </Form.Group>
           </Form>
         </Row>
