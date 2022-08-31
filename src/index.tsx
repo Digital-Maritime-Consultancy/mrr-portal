@@ -16,6 +16,7 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} >
+        <Route path="" element={<SearchView />} />
         <Route path="searchView" element={<SearchView />} />
         <Route path="treeView" element={<TreeView />} />
         <Route
