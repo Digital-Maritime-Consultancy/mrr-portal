@@ -8,14 +8,15 @@ import Resource from "./resource";
 export default function SearchView() {
   const [mrn, setMrn] = useState("");
   const [resources, setResources] = useState<MaritimeResourceDTO[]>([]);
+  const [connected, setConnected] = useState(0);
 
   useEffect(() => {
     const apiHandler = new MaritimeResourceControllerApi();
-    if (mrn.length) {
+    if (mrn.length && connected >= 0) {
       apiHandler.getAllResourcesForMrn(mrn)
-        .then((res: any) => res.data.content)
+        .then((res: any) => {setConnected(1); return res.data.content;})
         .then((data: MaritimeResourceDTO[]) => setResources(data))
-        .catch(e => alert(e));
+        .catch(() => setConnected(-1));
     }
   }, [mrn]);
   
@@ -39,14 +40,21 @@ export default function SearchView() {
             </Form.Group>
           </Form>
         </Row>
-        { resources.length &&
-          <Row style={{ backgroundColor: "#BDDCDE" }}>
-            <Resource resources={resources} mrn={mrn}></Resource>
+        { connected > 0 && resources.length > 0 &&
+          <>
+            <Row style={{ backgroundColor: "#BDDCDE" }}>
+              <Resource resources={resources} mrn={mrn}></Resource>
+            </Row>
+            <Row style={{ backgroundColor: "#F3FFB6"}}>
+              <Namespace mrn={mrn}></Namespace>
+            </Row>
+          </>
+        }
+        { connected < 0 &&
+          <Row style={{ backgroundColor: "red"}}>
+            <h2>Connection error:</h2> <h5>seems like you have a problem in the MRR server</h5>
           </Row>
         }
-        <Row style={{ backgroundColor: "#F3FFB6"}}>
-          <Namespace mrn={mrn}></Namespace>
-        </Row>
       </Container>
     </div>
   )
