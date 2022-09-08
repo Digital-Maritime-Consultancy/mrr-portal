@@ -14,25 +14,25 @@
 /**
  * 
  * @export
- * @interface Sort
+ * @interface SortObject
  */
-export interface Sort {
+export interface SortObject {
     /**
      * 
      * @type {boolean}
-     * @memberof Sort
+     * @memberof SortObject
      */
     empty?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof Sort
+     * @memberof SortObject
      */
-    sorted?: boolean;
+    unsorted?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof Sort
+     * @memberof SortObject
      */
-    unsorted?: boolean;
+    sorted?: boolean;
 }

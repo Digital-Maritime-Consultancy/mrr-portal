@@ -11,6 +11,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { OwnerDTO } from './owner-dto';
 /**
  * Object representing the syntax definition for a MRN namespace
  * @export
@@ -35,6 +36,12 @@ export interface NamespaceSyntaxDTO {
      * @memberof NamespaceSyntaxDTO
      */
     regex?: string;
+    /**
+     * 
+     * @type {OwnerDTO}
+     * @memberof NamespaceSyntaxDTO
+     */
+    namespaceOwner?: OwnerDTO;
     /**
      * The unique ID of the namespace syntax
      * @type {number}

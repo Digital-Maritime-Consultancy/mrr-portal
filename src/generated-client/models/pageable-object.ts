@@ -11,7 +11,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { Sort } from './sort';
+import { SortObject } from './sort-object';
 /**
  * 
  * @export
@@ -26,22 +26,10 @@ export interface PageableObject {
     offset?: number;
     /**
      * 
-     * @type {Sort}
+     * @type {SortObject}
      * @memberof PageableObject
      */
-    sort?: Sort;
-    /**
-     * 
-     * @type {number}
-     * @memberof PageableObject
-     */
-    pageNumber?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PageableObject
-     */
-    pageSize?: number;
+    sort?: SortObject;
     /**
      * 
      * @type {boolean}
@@ -54,4 +42,16 @@ export interface PageableObject {
      * @memberof PageableObject
      */
     unpaged?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof PageableObject
+     */
+    pageNumber?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof PageableObject
+     */
+    pageSize?: number;
 }

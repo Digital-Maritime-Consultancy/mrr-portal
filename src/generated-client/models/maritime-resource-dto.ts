@@ -24,11 +24,11 @@ export interface MaritimeResourceDTO {
      */
     mrn?: string;
     /**
-     * The version of the resource
-     * @type {number}
+     * The version of the resource in the format X.Y.Z and more formally given by the following regex: ^(0|[1-9]\\d\\*).(0|[1-9]\\d\\*).(0|[1-9]\\d\\*)$
+     * @type {string}
      * @memberof MaritimeResourceDTO
      */
-    version?: number;
+    version?: string;
     /**
      * The location of the resource in the form of a URL
      * @type {string}
@@ -36,11 +36,11 @@ export interface MaritimeResourceDTO {
      */
     location?: string;
     /**
-     * The title of the resource
+     * The name of the resource
      * @type {string}
      * @memberof MaritimeResourceDTO
      */
-    title?: string;
+    name?: string;
     /**
      * A description of the resource
      * @type {string}
