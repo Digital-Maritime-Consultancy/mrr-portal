@@ -1,47 +1,72 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Table } from "react-bootstrap";
+import { Container, ListGroup, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../generated-client";
 
 export interface INamespaceProp{
-    mrn: string;
+    namespaceInfo: NamespaceSyntaxDTO;
 }
 
-export default function Namespace({mrn}: INamespaceProp) {
-    const [namespace, setNamespace] = useState<NamespaceSyntaxDTO>();
+export default function Namespace({namespaceInfo}: INamespaceProp) {
 
     useEffect( () => {
-        const apiHandler = new NamespaceSyntaxControllerApi();
-        if (mrn.length) {
-            apiHandler.getNamespaceSyntaxForMrn(mrn)
-            .then(value => setNamespace(value.data))
-            .catch(e => setNamespace(undefined));
-        }        
-    }, [mrn]);
+    }, [namespaceInfo]);
 
+    const renderListGroupItem = (id: string, title: string, content?: string, description?: string, children?: any) => (
+        <ListGroup.Item>
+            <OverlayTrigger
+                placement="top"
+                delay={{ show: 250, hide: 400 }}
+                overlay={
+                    <Tooltip id={`tooltip-${id}`}>
+                        {description!}
+                    </Tooltip>
+                    } >
+                <span className="fw-bold">{title}</span>
+            </OverlayTrigger>
+            <div>{content}</div>
+            {children}
+        </ListGroup.Item>
+      );
+    const renderItems = (id: string, title: string, content?: string, description?: string) => (
+    <li>
+        <OverlayTrigger
+            placement="top"
+            delay={{ show: 250, hide: 400 }}
+            overlay={
+                <Tooltip id={`tooltip-${id}`}>
+                    {description!}
+                </Tooltip>
+                } >
+            <span className="fw-bold">{title}{content && ' : '}</span>
+        </OverlayTrigger>
+        <span>{content}</span>
+    </li>
+    );
+      
     return (
-        <Container fluid style={{ padding: "1rem"}}>
+        <Container fluid style={{ textAlign: "left", padding: "1rem"}}>
             <Row>
-                <h5>Namespace for {mrn}</h5>
+                <h4>MRN Namespace</h4>
+                <div className="p-3 fw-light">An MRN namespace is a collection of names that obey three constraints: uniqueness, consistent assignment, and assignment by common definition, i.e., syntax definition and process.
+                    [<a href="https://www.rfc-editor.org/rfc/rfc8141.html#page-20" target="_blank">RFC8141</a>], [<a href="https://www.iana.org/assignments/urn-formal/mrn" target="_blank">MRN namespace</a>] </div>
             </Row>
             <Row>
-                { namespace ? 
-                    <Table striped bordered hover>
-                        <tbody>
-                            <tr>
-                                <td>MRN namespace</td>
-                                <td>{namespace?.namespace}</td>
-                            </tr>
-                            <tr>
-                                <td>ABNF syntax</td>
-                                <td>{namespace?.abnfSyntax}</td>
-                            </tr>
-                            <tr>
-                                <td>Regular expression</td>
-                                <td>{namespace?.regex}</td>
-                            </tr>
-                        </tbody>
-                    </Table> :
+                { namespaceInfo ?
+                    <ListGroup variant="flush">
+                        {renderListGroupItem('mrn-namespace', 'MRN namespace', namespaceInfo?.namespace!, 'assigned MRN namespace')}
+                        {renderListGroupItem('abnf-syntax', 'ABNF syntax', namespaceInfo?.abnfSyntax!, 'a full syntax for MRNs belonging to that namespace')}
+                        {renderListGroupItem('regex', 'Regular expression', namespaceInfo?.regex!, 'a regular expression form equivalent to the ABNF syntax')}
+                        {renderListGroupItem('regex', 'Namespace owner', undefined, 'information of the MRN namespace owner', <ul>
+                            {renderItems('owner-name', 'Name', namespaceInfo?.namespaceOwner!.name!, 'name of the owner')}
+                            {renderItems('owner-url', 'URL', namespaceInfo?.namespaceOwner!.url!, 'URL for the website of the owner')}
+                            {renderItems('owner-address', 'Address', namespaceInfo?.namespaceOwner!.address!, 'address of the owner')}
+                            {renderItems('owner-country', 'Country', namespaceInfo?.namespaceOwner!.country!, 'country of the owner')}
+                            {renderItems('owner-email', 'email', namespaceInfo?.namespaceOwner!.email!, 'mail for the point of contact of the owner')}
+                            {renderItems('owner-phone', 'Phone', namespaceInfo?.namespaceOwner!.phone!, 'phone number for the point of contact of the owner')}
+                        </ul>)}
+                        
+                    </ListGroup>:
                     <h6>No corresponding namespace</h6>
                 }
             </Row>

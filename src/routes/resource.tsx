@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO, PageMaritimeResourceDTO } from "../generated-client";
 
@@ -17,9 +17,6 @@ export default function Resource({resources, mrn}: IResourceProp) {
     return (
         <Container fluid style={{ padding: "1rem"}}>
             <Row>
-                <h5>Resource</h5>
-            </Row>
-            <Row>
                 { resource ? 
                     <Table striped bordered hover>
                         <tbody>
@@ -32,8 +29,8 @@ export default function Resource({resources, mrn}: IResourceProp) {
                                 <td>{resource?.version}</td>
                             </tr>
                             <tr>
-                                <td>Title</td>
-                                <td>{resource?.title}</td>
+                                <td>Name</td>
+                                <td>{resource?.name}</td>
                             </tr>
                             <tr>
                                 <td>Description</td>

@@ -1,36 +1,40 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Container, Dropdown, Form, Row } from "react-bootstrap";
 import D3Tree from "../components/d3/d3tree";
-import { MaritimeResourceControllerApi, MaritimeResourceDTO } from "../generated-client";
+import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../generated-client";
 import Namespace from "./namespace";
 import Resource from "./resource";
 
-export default function SearchView() {
+export default function LookupComponent() {
   const [mrn, setMrn] = useState("");
   const [resources, setResources] = useState<MaritimeResourceDTO[]>([]);
   const [connected, setConnected] = useState(0);
+  const [namespaceInfo, setNamespaceInfo] = useState<NamespaceSyntaxDTO | undefined>();
+
+  const syntaxApiHandler = new NamespaceSyntaxControllerApi();
+  const resourceApiHandler = new MaritimeResourceControllerApi();
 
   useEffect(() => {
-    const apiHandler = new MaritimeResourceControllerApi();
     if (mrn.length && connected >= 0) {
-      apiHandler.getAllResourcesForMrn(mrn)
+      resourceApiHandler.getAllResourcesForMrn(mrn)
         .then((res: any) => {setConnected(1); return res.data.content;})
         .then((data: MaritimeResourceDTO[]) => setResources(data))
         .catch(() => setConnected(-1));
+      syntaxApiHandler.getNamespaceSyntaxForMrn(mrn)
+      .then(value => setNamespaceInfo(value.data as NamespaceSyntaxDTO))
+      .catch(() => setNamespaceInfo(undefined));
     }
   }, [mrn]);
   
   return (
     <div>
-      <Container fluid>
-        <Row>
+      <Row>
           <Form onSubmit={(e)=>{
             e.preventDefault();
-            console.log(e.target);
             }}>
             <Form.Group className="mb-3" controlId="searchMrn">
               <Form.Label></Form.Label>
-              <Form.Control type="text" placeholder="Enter an MRN of resource"
+              <Form.Control type="text" placeholder="Lookup a resource by MRN"
                 value={mrn}
                 onChange={(e) => setMrn(e.target.value)}
               />
@@ -42,17 +46,21 @@ export default function SearchView() {
             <Row style={{ backgroundColor: "#BDDCDE" }}>
               <Resource resources={resources} mrn={mrn}></Resource>
             </Row>
-            <Row style={{ backgroundColor: "#F3FFB6"}}>
-              <Namespace mrn={mrn}></Namespace>
+            <Row>
+              {resources.toString()}
             </Row>
           </>
+        }
+        { connected > 0 && namespaceInfo &&
+          <Row style={{ backgroundColor: "#F3FFB6"}}>
+            <Namespace namespaceInfo={namespaceInfo!}></Namespace>
+          </Row>
         }
         { connected < 0 &&
           <Row style={{ backgroundColor: "red"}}>
             <h2>Connection error:</h2> <h5>seems like you have a problem in the MRR server</h5>
           </Row>
         }
-      </Container>
     </div>
   )
 }
