@@ -5,7 +5,10 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MrnTreeComponent from './routes/mrnTree';
 import LookupComponent from './routes/lookup';
-import Registration from './routes/components/registration';
+import ResourceRegistration from './routes/components/resourceRegistration';
+import NamespaceRegistration from './routes/components/namespaceRegistration';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react-bootstrap-country-select/dist/react-bootstrap-country-select.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,8 +18,8 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} >
         <Route path="" element={<LookupComponent />} />
-        <Route path="register/resource/:namespace" element={<Registration />}/>
-        <Route path="register/namespace/:namespace" element={<Registration />}/>
+        <Route path="register/resource/:namespace" element={<ResourceRegistration />}/>
+        <Route path="register/namespace/:namespace" element={<NamespaceRegistration />}/>
         <Route path="treeView" element={<MrnTreeComponent />} />
         <Route
           path="*"

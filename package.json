@@ -16,7 +16,9 @@
     "d3": "^7.6.1",
     "node-sass": "^7.0.1",
     "react": "^18.2.0",
+    "react-beforeunload": "^2.5.3",
     "react-bootstrap": "^2.5.0",
+    "react-bootstrap-country-select": "^1.0.0",
     "react-d3-tree": "^3.3.4",
     "react-dom": "^18.2.0",
     "react-organizational-chart": "^2.1.1",
@@ -49,5 +51,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-beforeunload": "^2.1.1"
   }
 }
