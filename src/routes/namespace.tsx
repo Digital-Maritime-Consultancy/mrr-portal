@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { Container, ListGroup, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-import { NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../generated-client";
+import { useEffect } from "react";
+import { Container, ListGroup, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
+import { NamespaceSyntaxDTO } from "../generated-client";
 
 export interface INamespaceProp{
     namespaceInfo: NamespaceSyntaxDTO;

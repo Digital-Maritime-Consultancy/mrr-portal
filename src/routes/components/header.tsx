@@ -1,8 +1,12 @@
+import { useEffect } from "react";
 import { Button, ButtonGroup, Col, Dropdown, Row } from "react-bootstrap";
 import keycloak from "../../auth/mrrKeycloak";
+import { useAuth } from "../../auth/useAuth";
 
 export const Header = () => {
-    const testNamespaces = ["urn", "urn:mrn"];
+  const { token, initialized: authInitialized } = useAuth();
+  
+
     return (
         <Row>
             <Col xs={1}>
@@ -14,24 +18,22 @@ export const Header = () => {
                 <h1>Maritime Resource Registry</h1>
             </Col>
             <Col xs={1}>
-              <Dropdown className="d-flex">
+              <Dropdown align="end" className="d-flex">
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                   Add
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                     {!keycloak.authenticated && <Dropdown.Item onClick={() => keycloak.login()}>Login</Dropdown.Item>}
                     {!!keycloak.authenticated && <>
-                      <Dropdown.Item onClick={() => keycloak.login()}>Logout ({keycloak.tokenParsed!.preferred_username})</Dropdown.Item>
-                      {testNamespaces.map((namespace, index) =>
+                      {keycloak.tokenParsed?.manages_namespaces?.map((namespace: any, index: number) =>
                         <div key={index}>
                         <Dropdown.Header>{namespace}</Dropdown.Header>
                         <Dropdown.Item href={`/register/resource/`+namespace}>Resource</Dropdown.Item>
                         <Dropdown.Item href={`/register/namespace/`+namespace}>Namespace</Dropdown.Item>
-                        {index < testNamespaces.length-1 &&
-                            <Dropdown.Divider></Dropdown.Divider>
-                        }
+                        <Dropdown.Divider></Dropdown.Divider>
                         </div>
                       )}
+                      <Dropdown.Item onClick={() => keycloak.login()}>Logout ({keycloak.tokenParsed!.preferred_username})</Dropdown.Item>
                     </>}
                 </Dropdown.Menu>
               </Dropdown>

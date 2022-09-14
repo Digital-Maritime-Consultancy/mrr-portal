@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Button, Container, Form, Modal, Row } from "react-bootstrap";
+import { Alert, Button, Container, Form, Row } from "react-bootstrap";
 import CountrySelect from "react-bootstrap-country-select";
 import { useParams } from "react-router-dom";
 import { NamespaceSyntaxDTO } from "../../generated-client";
