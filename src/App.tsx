@@ -1,45 +1,14 @@
 import './App.css';
-import { Link, Outlet } from 'react-router-dom';
-import { Button, ButtonGroup, Col, Container, Dropdown, Row } from 'react-bootstrap';
+import { Outlet } from 'react-router-dom';
+import { Container, Row } from 'react-bootstrap';
+import { Header } from './routes/components/header';
 
 function App() {
-  const testNamespaces = ["urn", "urn:mrn"];
-
   return (
     <div className="App" style={{ paddingTop: "3rem"}}>
       <Container>
+        <Header />
         <Row>
-            <Col xs={1}>
-                <ButtonGroup className="d-flex">
-                  <Button href={'/'} variant="primary">Home</Button>
-                </ButtonGroup>
-            </Col>
-            <Col xs={10}>
-                <h1>Maritime Resource Registry</h1>
-            </Col>
-            <Col xs={1}>
-              <Dropdown className="d-flex">
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  Add
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  {testNamespaces.map((namespace, index) =>
-                    <div key={index}>
-                      <Dropdown.Header>{namespace}</Dropdown.Header>
-                      <Dropdown.Item href={`/register/resource/`+namespace}>Resource</Dropdown.Item>
-                      <Dropdown.Item href={`/register/namespace/`+namespace}>Namespace</Dropdown.Item>
-                      {index < testNamespaces.length-1 &&
-                        <Dropdown.Divider></Dropdown.Divider>
-                      }
-                    </div>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Col>
-        </Row>
-        <Row>
-
           <Outlet />
         </Row>
       </Container>
