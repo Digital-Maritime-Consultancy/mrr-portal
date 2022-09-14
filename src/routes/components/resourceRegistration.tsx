@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Container, Form, Modal, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../../generated-client";
+import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../../generated-client";
 import { checkMrnSyntax, checkUrlSyntax } from "../../util/syntaxCheck";
 import Namespace from "../namespace";
 
@@ -17,6 +17,7 @@ export default function ResourceRegistration() {
     const handleClose = () => setNamespaceModalShow(false);
     const handleShow = () => setNamespaceModalShow(true);
 
+    const resourceApiHandler = new MaritimeResourceControllerApi();
     const syntaxApiHandler = new NamespaceSyntaxControllerApi();
 
     const {namespace} = useParams();
@@ -25,7 +26,6 @@ export default function ResourceRegistration() {
         if (namespace!.length) {
             syntaxApiHandler.getNamespaceSyntaxForMrn(namespace!)
             .then(value => {
-                console.log(value);
                 setNamespaceInfo(value.data as NamespaceSyntaxDTO);
             })
             .catch(() => setNamespaceInfo(undefined));
@@ -34,7 +34,8 @@ export default function ResourceRegistration() {
 
     const handleSubmit = (e: any) => {
         if (validate(value)) {
-            console.log(value);
+            resourceApiHandler.createResource(value)
+                .then((res) => console.log(res));
             setErrorShow(false);
         } else {
             setErrorShow(true);

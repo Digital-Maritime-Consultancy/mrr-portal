@@ -12,7 +12,7 @@ export default function NamespaceRegistration() {
     const [errorShow, setErrorShow] = useState(false);
     const [hangingMsgShow, setHangingMsgShow] = useState(false);
     const [ value, setValue ] = useState<NamespaceSyntaxDTO>({});
-    const [hanging, setHanging] = useState(true);
+    const [hanging, setHanging] = useState(false);
 
     useBeforeunload((event) => {
         if (hanging) {
