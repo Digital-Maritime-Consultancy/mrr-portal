@@ -18,10 +18,13 @@ export default function LookupComponent() {
       resourceApiHandler.getAllResourcesForMrn(mrn)
         .then((res: any) => {setConnected(1); return res.data.content;})
         .then((data: MaritimeResourceDTO[]) => setResources(data))
-        .catch(() => setConnected(-1));
+        .catch(() => {setConnected(-1); setResources([])});
       syntaxApiHandler.getNamespaceSyntaxForMrn(mrn)
       .then(value => setNamespaceInfo(value.data as NamespaceSyntaxDTO))
       .catch(() => setNamespaceInfo(undefined));
+    } else {
+      setResources([]);
+      setNamespaceInfo(undefined);
     }
   }, [mrn]);
   

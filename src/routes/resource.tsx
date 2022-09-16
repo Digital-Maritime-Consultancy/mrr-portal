@@ -10,14 +10,12 @@ export interface IResourceProp{
 }
 
 export default function Resource({resources, mrn, namespaceInfo}: IResourceProp) {
-    const [resource, setResource] = useState<MaritimeResourceDTO | undefined>();
     const [namespaceModalShow, setNamespaceModalShow] = useState(false);
 
     const handleClose = () => setNamespaceModalShow(false);
     const handleShow = () => setNamespaceModalShow(true);
     
     useEffect( () => {
-        setResource(resources.filter(r => r.mrn === mrn).pop());
     }, [mrn, namespaceInfo]);
 
     const renderListGroupItem = (id: string, title: string, content?: string, description?: string, children?: any) => (
@@ -58,14 +56,20 @@ export default function Resource({resources, mrn, namespaceInfo}: IResourceProp)
                     </div>
                 </Row>
                 <Row>
-                    { resource ?
-                        <ListGroup variant="flush">
-                            {renderListGroupItem('mrn', 'MRN', resource?.mrn!, 'the MRN of the resource')}
-                            {renderListGroupItem('version', 'Version', resource?.version!, 'a version of the resource in the format MAJOR.MINOR.PATCH')}
-                            {renderListGroupItem('name', 'Name', resource?.name!, 'the name of the resource')}
-                            {renderListGroupItem('description', 'Description', resource?.description!, 'a short description of the resource')}
-                            {renderListGroupItem('location', 'Location', resource?.location!, 'a link to the original source of the resource')}
-                        </ListGroup>:
+                    { resources && resources.length ?
+                        resources.map(resource => 
+                            <div key={resource.version}>
+                                <hr />
+                                <ListGroup variant="flush">
+                                    {renderListGroupItem('mrn', 'MRN', resource?.mrn!, 'the MRN of the resource')}
+                                    {renderListGroupItem('version', 'Version', resource?.version!, 'a version of the resource in the format MAJOR.MINOR.PATCH')}
+                                    {renderListGroupItem('name', 'Name', resource?.name!, 'the name of the resource')}
+                                    {renderListGroupItem('description', 'Description', resource?.description!, 'a short description of the resource')}
+                                    {renderListGroupItem('location', 'Location', resource?.location!, 'a link to the original source of the resource')}
+                                </ListGroup>
+                            </div>
+                        )
+                        :
                         <h6>No corresponding namespace</h6>
                     }
                 </Row>
