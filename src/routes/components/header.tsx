@@ -25,7 +25,7 @@ export const Header = () => {
                 <Dropdown.Menu>
                     {!keycloak.authenticated && <Dropdown.Item onClick={() => keycloak.login()}>Login</Dropdown.Item>}
                     {!!keycloak.authenticated && <>
-                      {keycloak.tokenParsed?.manages_namespaces?.map((namespace: any, index: number) =>
+                      {keycloak.tokenParsed?.manages_namespaces?.sort((a: any, b: any) => a.length - b.length).map((namespace: any, index: number) =>
                         <div key={index}>
                         <Dropdown.Header>{namespace}</Dropdown.Header>
                         <Dropdown.Item href={`/register/resource/`+namespace}>Resource</Dropdown.Item>
