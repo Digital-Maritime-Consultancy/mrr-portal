@@ -48,12 +48,12 @@ export default function Namespace({namespaceInfo}: INamespaceProp) {
             <Row>
                 <h4>Namespace</h4>
                 <div className="p-3 fw-light">A namespace is a collection of names that obey three constraints: uniqueness, consistent assignment, and assignment by common definition, i.e., syntax definition and process.
-                    [<a href="https://www.rfc-editor.org/rfc/rfc8141.html#page-20" target="_blank">RFC8141</a>], [<a href="https://www.iana.org/assignments/urn-formal/mrn" target="_blank">MRN namespace</a>] </div>
+                    [<a href="https://www.rfc-editor.org/rfc/rfc8141.html#page-20" target="_blank" rel="noreferrer">RFC8141</a>], [<a href="https://www.iana.org/assignments/urn-formal/mrn" target="_blank" rel="noreferrer">MRN namespace</a>] </div>
             </Row>
             <Row>
                 { namespaceInfo ?
                     <ListGroup variant="flush">
-                        {renderListGroupItem('mrn-namespace', 'namespace', namespaceInfo?.namespace!, 'assigned MRN namespace')}
+                        {renderListGroupItem('mrn-namespace', 'Namespace', namespaceInfo?.namespace!, 'assigned MRN namespace')}
                         {renderListGroupItem('abnf-syntax', 'ABNF syntax', namespaceInfo?.abnfSyntax!, 'a full syntax for MRNs belonging to that namespace')}
                         {renderListGroupItem('regex', 'Regular expression', namespaceInfo?.regex!, 'a regular expression form equivalent to the ABNF syntax')}
                         {renderListGroupItem('regex', 'Namespace owner', undefined, 'information of the MRN namespace owner', <ul>

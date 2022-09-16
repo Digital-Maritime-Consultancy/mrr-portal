@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, ButtonGroup, Col, Container, Dropdown, Form, Row } from "react-bootstrap";
-import D3Tree from "../components/d3/d3tree";
+import { Form, Row } from "react-bootstrap";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../generated-client";
 import Namespace from "./namespace";
 import Resource from "./resource";
@@ -41,20 +40,19 @@ export default function LookupComponent() {
             </Form.Group>
           </Form>
         </Row>
-        { connected > 0 && resources.length > 0 &&
+        { connected > 0 && resources.length > 0 && namespaceInfo &&
           <>
-            <Row style={{ backgroundColor: "#BDDCDE" }}>
-              <Resource resources={resources} mrn={mrn}></Resource>
-            </Row>
             <Row>
-              {resources.toString()}
+              <Resource resources={resources} mrn={mrn} namespaceInfo={namespaceInfo!}></Resource>
             </Row>
           </>
         }
-        { connected > 0 && namespaceInfo &&
-          <Row style={{ backgroundColor: "#F3FFB6"}}>
-            <Namespace namespaceInfo={namespaceInfo!}></Namespace>
-          </Row>
+        { connected > 0 && namespaceInfo && mrn === namespaceInfo.namespace &&
+          <>
+            <Row>
+              <Namespace namespaceInfo={namespaceInfo!}></Namespace>
+            </Row>
+          </>
         }
         { connected < 0 &&
           <Row style={{ backgroundColor: "red"}}>

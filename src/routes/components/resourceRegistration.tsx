@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Container, Form, Modal, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../../auth/useAuth";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../../generated-client";
 import { checkMrnSyntax, checkUrlSyntax } from "../../util/syntaxCheck";
 import Namespace from "../namespace";
@@ -8,11 +9,13 @@ import Namespace from "../namespace";
 export default function ResourceRegistration() {
     const [value, setValue] = useState<MaritimeResourceDTO>({});
     const [validated, setValidated] = useState(false);
-    const [mrnError, setMrnError] = useState(false);
-    const [urlError, setUrlError] = useState(false);
+    const [mrnValidity, setMrnValidity] = useState(false);
+    const [urlValidity, setUrlValidity] = useState(false);
     const [namespaceInfo, setNamespaceInfo] = useState<NamespaceSyntaxDTO | undefined>();
     const [namespaceModalShow, setNamespaceModalShow] = useState(false);
     const [errorShow, setErrorShow] = useState(false);
+
+    const { token, initialized: authInitialized } = useAuth();
 
     const handleClose = () => setNamespaceModalShow(false);
     const handleShow = () => setNamespaceModalShow(true);
@@ -30,11 +33,11 @@ export default function ResourceRegistration() {
             })
             .catch(() => setNamespaceInfo(undefined));
         }
-      }, [namespace]);
+      }, [namespace, token]);
 
     const handleSubmit = (e: any) => {
         if (validate(value)) {
-            resourceApiHandler.createResource(value)
+            resourceApiHandler.createResource(value, {headers: { Authorization: `Bearer ${token}` }})
                 .then((res) => console.log(res));
             setErrorShow(false);
         } else {
@@ -52,12 +55,12 @@ export default function ResourceRegistration() {
                 return false;
             }
         }
-        return !mrnError && !urlError;
+        return mrnValidity && urlValidity;
     }
 
     const checkMrnInput = (event: any) => {
         const valid = checkMrnSyntax(event.currentTarget.value, namespaceInfo);
-        setMrnError(valid);
+        setMrnValidity(valid);
         setValue({...value, mrn: valid ? event.currentTarget.value : undefined});
         if (valid) {
             
@@ -66,7 +69,7 @@ export default function ResourceRegistration() {
 
     const checkUrlInput = (event: any) => {
         const valid = checkUrlSyntax(event.currentTarget.value);
-        setUrlError(valid);
+        setUrlValidity(valid);
         setValue({...value, location: valid ? event.currentTarget.value : undefined});
     }
 
@@ -88,7 +91,7 @@ export default function ResourceRegistration() {
                     <Form validated={validated} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formMRN">
                             <Form.Label>Maritime Resource Name (MRN)</Form.Label>
-                            <Form.Control type="text" required onChange={checkMrnInput} defaultValue={namespace + ':'} isInvalid={!mrnError} />
+                            <Form.Control type="text" required onChange={checkMrnInput} defaultValue={namespace + ':'} isInvalid={!mrnValidity} />
                             <Form.Control.Feedback type="invalid">Invalid MRN for '{namespaceInfo?.namespace}'</Form.Control.Feedback>
                             <Form.Text className="text-muted">
                             MRN of resource complying with the <a className={"fw-bold"} onClick={handleShow}>{namespaceInfo?.namespace} namespace syntax</a>
@@ -118,7 +121,7 @@ export default function ResourceRegistration() {
 
                         <Form.Group className="mb-3" controlId="formLocation">
                             <Form.Label>Location</Form.Label>
-                            <Form.Control type="text" required placeholder="https://example.com" onChange={checkUrlInput} isInvalid={!urlError} />
+                            <Form.Control type="text" required placeholder="https://example.com" onChange={checkUrlInput} isInvalid={!urlValidity} />
                             <Form.Control.Feedback type="invalid">Enter a valid URL address</Form.Control.Feedback>
                             <Form.Text className="text-muted">
                                 Link to resource in the form of a URL (uniform resource locator)
