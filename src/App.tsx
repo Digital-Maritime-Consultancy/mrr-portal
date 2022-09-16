@@ -9,6 +9,7 @@ import ResourceRegistration from './routes/components/resourceRegistration';
 import NamespaceRegistration from './routes/components/namespaceRegistration';
 import MrnTreeComponent from './routes/mrnTree';
 import keycloak from './auth/mrrKeycloak';
+import { SubmitResult } from './routes/components/submitResult';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="register" element={<div><Outlet /></div>}>
               <Route path="resource/:namespace" element={<ResourceRegistration />} />
               <Route path="namespace/:namespace" element={<NamespaceRegistration />} />
+              <Route path="result/:name" element={<SubmitResult />} />
             </Route>
             <Route path="treeView" element={<MrnTreeComponent />} />
             <Route

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Container, Form, Modal, Row } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../../generated-client";
 import { checkMrnSyntax, checkUrlSyntax } from "../../util/syntaxCheck";
 import Namespace from "../namespace";
+import { ErrorNoticer } from "./errorNoticer";
 
 export default function ResourceRegistration() {
     const [value, setValue] = useState<MaritimeResourceDTO>({});
@@ -14,6 +15,8 @@ export default function ResourceRegistration() {
     const [namespaceInfo, setNamespaceInfo] = useState<NamespaceSyntaxDTO | undefined>();
     const [namespaceModalShow, setNamespaceModalShow] = useState(false);
     const [errorShow, setErrorShow] = useState(false);
+    const [errorHeader, setErrorHeader] = useState("");
+    const [errorContent, setErrorContent] = useState("");
 
     const { token, initialized: authInitialized } = useAuth();
 
@@ -24,6 +27,7 @@ export default function ResourceRegistration() {
     const syntaxApiHandler = new NamespaceSyntaxControllerApi();
 
     const {namespace} = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (namespace!.length) {
@@ -38,7 +42,12 @@ export default function ResourceRegistration() {
     const handleSubmit = (e: any) => {
         if (validate(value)) {
             resourceApiHandler.createResource(value, {headers: { Authorization: `Bearer ${token}` }})
-                .then((res) => console.log(res));
+                .then((res) => navigate("/register/result/"+res.data.mrn))
+                .catch(err => {
+                    setErrorShow(true);
+                    setErrorHeader(err.response.data.error);
+                    setErrorContent(err.response.data.message);
+                });
             setErrorShow(false);
         } else {
             setErrorShow(true);
@@ -75,12 +84,10 @@ export default function ResourceRegistration() {
 
     return (
         <Container style={{ textAlign: "left", padding: "1rem"}}>
-            {errorShow && <Alert variant="danger" onClose={() => setErrorShow(false)} dismissible>
-                <Alert.Heading>There is some problem in your input!</Alert.Heading>
-                <p>
-                    You might need to check whether all your input is correctly entered. Please check error messages under each input field.
-                </p>
-            </Alert>
+            {errorShow && 
+                <ErrorNoticer header={errorHeader}
+                    content={errorContent}
+                    setErrorShow={setErrorShow} />
             }
             {namespaceInfo &&
             <>
