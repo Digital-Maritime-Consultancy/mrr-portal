@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Alert, Button, Container, Form, Row, Spinner } from "react-bootstrap";
 import CountrySelect from "react-bootstrap-country-select";
-import { useParams } from "react-router-dom";
-import { NamespaceSyntaxControllerApi, NamespaceSyntaxDTO, SyntaxCreationDTO } from "../../generated-client";
+import { useNavigate, useParams } from "react-router-dom";
+import { NamespaceSyntaxControllerApi, NamespaceSyntaxDTO, SyntaxCreationDTO, SyntaxCreationResultCodeEnum } from "../../generated-client";
 import { useBeforeunload } from 'react-beforeunload';
 import { useAuth } from "../../auth/useAuth";
 import { ErrorNoticer } from "./errorNoticer";
@@ -19,7 +19,9 @@ export default function NamespaceRegistration() {
     const [errorContent, setErrorContent] = useState("");
     const { token, initialized: authInitialized } = useAuth();
     const [creationId, setCreationId] = useState("");
+    const [trialCount, setTrialCount] = useState(0);
     const syntaxApiHandler = new NamespaceSyntaxControllerApi();
+    const navigate = useNavigate();
 
     useBeforeunload((event) => {
         if (hanging) {
@@ -43,29 +45,51 @@ export default function NamespaceRegistration() {
         return new Promise( resolve => setTimeout(resolve, ms) );
     }
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async(e: any) => {
         if (validate(value)) {
             const convertedAbnf = value.abnfSyntax?.replaceAll('\n', '\r\n');
             setValue({...value, abnfSyntax: convertedAbnf! + convertedAbnf!.endsWith('\r\n') ? '': '\r\n'})
 
             // call the api
             syntaxApiHandler.createNamespaceSyntax(value, {headers: { Authorization: `Bearer ${token}` }})
-                .then((res) => {
+                .then(async (res) => {
                     // show error
                     setHangingMsgShow(true);
                     // hanging and disable input
                     setHanging(true);
                     setCreationId(res.data);
                     let done = false;
-                    (async () => { 
+                    while (!done) {
                         // 20 sec wait
                         await delay(5000);
-                
+                        let count = 0;
                         // Do something after
                         syntaxApiHandler.getSyntaxCreationStatus(res.data, {headers: { Authorization: `Bearer ${token}` }})
-                            .then(res => console.log(res));
-                            done = true;
-                    })();
+                            .then(res => {
+                                count += 1;
+                                setTrialCount(count);
+                                const code = res.data.code as SyntaxCreationResultCodeEnum;
+                                if (code === SyntaxCreationResultCodeEnum.CREATING) {
+                                } else if (code === SyntaxCreationResultCodeEnum.OK) {
+                                    done = true;
+                                    setHanging(false);
+                                    navigate("/register/result/"+value.namespace);
+                                } else if (code === SyntaxCreationResultCodeEnum.ERROR) {
+                                    done = true;
+                                    setHanging(false);
+                                    setHangingMsgShow(false);
+                                    setErrorShow(true);
+                                    setErrorHeader(res.data.code! as string);
+                                    setErrorContent(res.data.message! as string);
+                                } else {
+                                    // something weird happened
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                console.log(err.response.status);
+                            });
+                    }
                 })
                 .catch(err => {
                     setErrorShow(true);
@@ -96,7 +120,7 @@ export default function NamespaceRegistration() {
             }
             {hangingMsgShow && 
                 <ErrorNoticer variant="warning" header={"Please hold this page! MRR is now validating your syntax"}
-                    content={"More than 5 mins of processing time is expected to complete the validation. We strongly encourage you to leave this page. This page will check the process and notify you when it is done."}
+                    content={"More than 5 mins of processing time is expected to complete the validation. We strongly encourage you to leave this page. This page will check the process and notify you when it is done. Number of checking: " + (trialCount)}
                     setErrorShow={setErrorShow} />
             }
             {namespace &&

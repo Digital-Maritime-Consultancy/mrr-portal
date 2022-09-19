@@ -23,7 +23,7 @@ export default function Namespace({namespaceInfo}: INamespaceProp) {
                     } >
                 <span className="fw-bold">{title}</span>
             </OverlayTrigger>
-            <div>{content}</div>
+            <div style={{ whiteSpace: 'pre-line' }}>{content}</div>
             {children}
         </ListGroup.Item>
       );
@@ -50,6 +50,7 @@ export default function Namespace({namespaceInfo}: INamespaceProp) {
                 <div className="p-3 fw-light">A namespace is a collection of names that obey three constraints: uniqueness, consistent assignment, and assignment by common definition, i.e., syntax definition and process.
                     [<a href="https://www.rfc-editor.org/rfc/rfc8141.html#page-20" target="_blank" rel="noreferrer">RFC8141</a>], [<a href="https://www.iana.org/assignments/urn-formal/mrn" target="_blank" rel="noreferrer">MRN namespace</a>] </div>
             </Row>
+            <>{console.log(namespaceInfo?.abnfSyntax!)}</>
             <Row>
                 { namespaceInfo ?
                     <ListGroup variant="flush">

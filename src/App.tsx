@@ -7,14 +7,13 @@ import { Footer } from './routes/components/footer';
 import LookupComponent from './routes/lookup';
 import ResourceRegistration from './routes/components/resourceRegistration';
 import NamespaceRegistration from './routes/components/namespaceRegistration';
-import MrnTreeComponent from './routes/mrnTree';
 import keycloak from './auth/mrrKeycloak';
 import { SubmitResult } from './routes/components/submitResult';
 
 function App() {
   return (
     <div className="App" style={{ paddingTop: "3rem"}}>
-      <ReactKeycloakProvider authClient={keycloak} initOptions={{onLoad: 'check-sso'}}>
+      <ReactKeycloakProvider authClient={keycloak} initOptions={{onLoad: 'check-sso', autoRefreshToken: true, checkLoginIframe: true}}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={
@@ -32,7 +31,6 @@ function App() {
               <Route path="namespace/:namespace" element={<NamespaceRegistration />} />
               <Route path="result/:name" element={<SubmitResult />} />
             </Route>
-            <Route path="treeView" element={<MrnTreeComponent />} />
             <Route
               path="*"
               element={
