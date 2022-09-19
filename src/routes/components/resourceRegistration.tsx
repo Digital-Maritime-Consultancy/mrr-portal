@@ -51,13 +51,15 @@ export default function ResourceRegistration() {
             setErrorShow(false);
         } else {
             setErrorShow(true);
+            setErrorHeader("There is some problem in your input!");
+            setErrorContent("You might need to check whether all your input is correctly entered. Please check error messages under each input field.");
         }
         e.preventDefault();
         setValidated(true);
     }
 
     const validate = (value: MaritimeResourceDTO): boolean => {
-        let property: keyof typeof value; // Type is 'foo' | 'bar'
+        let property: keyof typeof value;
 
         for (property in value) {
             if (!value[property]){
@@ -71,9 +73,6 @@ export default function ResourceRegistration() {
         const valid = checkMrnSyntax(event.currentTarget.value, namespaceInfo);
         setMrnValidity(valid);
         setValue({...value, mrn: valid ? event.currentTarget.value : undefined});
-        if (valid) {
-            
-        }
     }
 
     const checkUrlInput = (event: any) => {
@@ -85,7 +84,7 @@ export default function ResourceRegistration() {
     return (
         <Container style={{ textAlign: "left", padding: "1rem"}}>
             {errorShow && 
-                <ErrorNoticer header={errorHeader}
+                <ErrorNoticer variant="danger" header={errorHeader}
                     content={errorContent}
                     setErrorShow={setErrorShow} />
             }
