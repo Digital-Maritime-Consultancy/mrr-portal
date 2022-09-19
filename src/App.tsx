@@ -9,6 +9,9 @@ import ResourceRegistration from './routes/components/resourceRegistration';
 import NamespaceRegistration from './routes/components/namespaceRegistration';
 import keycloak from './auth/mrrKeycloak';
 import { SubmitResult } from './routes/components/submitResult';
+import { useAuth } from './auth/useAuth';
+import { useEffect } from 'react';
+import { ProtectedRoute } from './routes/components/protectedRoute';
 
 function App() {
   return (
@@ -26,9 +29,14 @@ function App() {
           </Container>
           } >
             <Route path="" element={<LookupComponent />} />
-            <Route path="register" element={<div><Outlet /></div>}>
+            <Route path="register" element={
+              <ProtectedRoute>
+                <Outlet />
+              </ProtectedRoute>
+            }>
               <Route path="resource/:namespace" element={<ResourceRegistration />} />
               <Route path="namespace/:namespace" element={<NamespaceRegistration />} />
+              <Route path="namespace/:namespace/:creationId" element={<NamespaceRegistration />} />
               <Route path="result/:name" element={<SubmitResult />} />
             </Route>
             <Route
