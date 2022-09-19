@@ -1,30 +1,56 @@
 import './App.css';
-import { Link, Outlet } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { Container, Row } from 'react-bootstrap';
+import { Header } from './routes/components/header';
+import { ReactKeycloakProvider } from '@react-keycloak/web';
+import { Footer } from './routes/components/footer';
+import LookupComponent from './routes/lookup';
+import ResourceRegistration from './routes/components/resourceRegistration';
+import NamespaceRegistration from './routes/components/namespaceRegistration';
+import keycloak from './auth/mrrKeycloak';
+import { SubmitResult } from './routes/components/submitResult';
+import { useAuth } from './auth/useAuth';
+import { useEffect } from 'react';
+import { ProtectedRoute } from './routes/components/protectedRoute';
 
 function App() {
   return (
-    <div className="App">
-      <div style={{ padding: "2rem"}}>
-        <h1>Maritime Resource Registry Portal</h1>
-        <p>Search resources by Maritime Resource Name</p>
-      </div>
-      <nav
-        style={{
-          borderBottom: "solid 1px",
-          paddingBottom: "0rem",
-        }}
-      >
-        {/*
-          <Link to="searchView">Search by MRN</Link> |{" "}
-          <Link to="treeView">See MRN graph</Link>
-          */
-        }
-        
-      </nav>
-      <Outlet />
-      <div style={{ fontSize: "80%", paddingTop: "1rem"}}>
-          The development of MRR is a part of the project titled “Development of Open Platform Technologies for Smart Maritime Safety and Industries”<br />funded by the Korea Research Institute of Ships and Ocean Engineering (PES4070).
-      </div>
+    <div className="App" style={{ paddingTop: "3rem"}}>
+      <ReactKeycloakProvider authClient={keycloak} initOptions={{onLoad: 'check-sso', autoRefreshToken: true, checkLoginIframe: true}}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={
+            <Container>
+            <Header />
+            <Row>
+              <Outlet />
+            </Row>
+            <Footer />
+          </Container>
+          } >
+            <Route path="" element={<LookupComponent />} />
+            <Route path="register" element={
+              <ProtectedRoute>
+                <Outlet />
+              </ProtectedRoute>
+            }>
+              <Route path="resource/:namespace" element={<ResourceRegistration />} />
+              <Route path="namespace/:namespace" element={<NamespaceRegistration />} />
+              <Route path="namespace/:namespace/:creationId" element={<NamespaceRegistration />} />
+              <Route path="result/:name" element={<SubmitResult />} />
+            </Route>
+            <Route
+              path="*"
+              element={
+                <main style={{ padding: "1rem" }}>
+                  <p>There's nothing here!</p>
+                </main>
+              }
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ReactKeycloakProvider>
     </div>
   );
 }

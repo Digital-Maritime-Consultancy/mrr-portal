@@ -13,7 +13,7 @@
  */
 import { MaritimeResourceDTO } from './maritime-resource-dto';
 import { PageableObject } from './pageable-object';
-import { Sort } from './sort';
+import { SortObject } from './sort-object';
 /**
  * 
  * @export
@@ -52,22 +52,10 @@ export interface PageMaritimeResourceDTO {
     number?: number;
     /**
      * 
-     * @type {Sort}
+     * @type {SortObject}
      * @memberof PageMaritimeResourceDTO
      */
-    sort?: Sort;
-    /**
-     * 
-     * @type {number}
-     * @memberof PageMaritimeResourceDTO
-     */
-    numberOfElements?: number;
-    /**
-     * 
-     * @type {PageableObject}
-     * @memberof PageMaritimeResourceDTO
-     */
-    pageable?: PageableObject;
+    sort?: SortObject;
     /**
      * 
      * @type {boolean}
@@ -80,6 +68,18 @@ export interface PageMaritimeResourceDTO {
      * @memberof PageMaritimeResourceDTO
      */
     last?: boolean;
+    /**
+     * 
+     * @type {PageableObject}
+     * @memberof PageMaritimeResourceDTO
+     */
+    pageable?: PageableObject;
+    /**
+     * 
+     * @type {number}
+     * @memberof PageMaritimeResourceDTO
+     */
+    numberOfElements?: number;
     /**
      * 
      * @type {boolean}

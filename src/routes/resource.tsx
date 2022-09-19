@@ -1,53 +1,90 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Table } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-import { MaritimeResourceControllerApi, MaritimeResourceDTO, PageMaritimeResourceDTO } from "../generated-client";
+import { Button, Col, Container, ListGroup, Modal, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
+import { MaritimeResourceDTO, NamespaceSyntaxDTO } from "../generated-client";
+import Namespace from "./namespace";
 
 export interface IResourceProp{
     resources: MaritimeResourceDTO[];
     mrn: string;
+    namespaceInfo?: NamespaceSyntaxDTO;
 }
 
-export default function Resource({resources, mrn}: IResourceProp) {
-    const [resource, setResource] = useState<MaritimeResourceDTO | undefined>();
+export default function Resource({resources, mrn, namespaceInfo}: IResourceProp) {
+    const [namespaceModalShow, setNamespaceModalShow] = useState(false);
+
+    const handleClose = () => setNamespaceModalShow(false);
+    const handleShow = () => setNamespaceModalShow(true);
     
     useEffect( () => {
-        setResource(resources.filter(r => r.mrn === mrn).pop());
-    }, [mrn]);
+    }, [mrn, namespaceInfo]);
+
+    const renderListGroupItem = (id: string, title: string, content?: string, description?: string, children?: any) => (
+        <ListGroup.Item>
+            <OverlayTrigger
+                placement="top"
+                delay={{ show: 250, hide: 400 }}
+                overlay={
+                    <Tooltip id={`tooltip-${id}`}>
+                        {description!}
+                    </Tooltip>
+                    } >
+                <span className="fw-bold">{title}</span>
+            </OverlayTrigger>
+            <div>
+            {
+                id === 'location' ? <a href={content} target="_blank" rel="noreferrer">{content}</a> : content
+            }
+            </div>
+            {children}
+        </ListGroup.Item>
+      );
+
     return (
-        <Container fluid style={{ padding: "1rem"}}>
-            <Row>
-                <h5>Resource</h5>
-            </Row>
-            <Row>
-                { resource ? 
-                    <Table striped bordered hover>
-                        <tbody>
-                            <tr>
-                                <td>MRN</td>
-                                <td>{resource?.mrn}</td>
-                            </tr>
-                            <tr>
-                                <td>Version</td>
-                                <td>{resource?.version}</td>
-                            </tr>
-                            <tr>
-                                <td>Title</td>
-                                <td>{resource?.title}</td>
-                            </tr>
-                            <tr>
-                                <td>Description</td>
-                                <td>{resource?.description}</td>
-                            </tr>
-                            <tr>
-                                <td>Location</td>
-                                <td><a href={resource?.location} target='_blank'>Link</a></td>
-                            </tr>
-                        </tbody>
-                    </Table> :
-                    <h6>No resource selected</h6>
-                }
-            </Row>
-        </Container>
+        <>
+            <Container fluid style={{ textAlign: "left", padding: "1rem"}}>
+                <Row>
+                    <Col>
+                        <h4>Resource</h4>
+                    </Col>
+                    <Col>
+                        
+                    </Col>
+                    
+                    <div className="p-3 fw-light">
+                        A physical or virtual entity associated with MRN and version.
+                        The MRN of the the resource complies with the <a className={"fw-bold"} onClick={handleShow}>{namespaceInfo?.namespace} namespace syntax</a>
+                    </div>
+                </Row>
+                <Row>
+                    { resources && resources.length ?
+                        resources.map(resource => 
+                            <div key={resource.version}>
+                                <hr />
+                                <ListGroup variant="flush">
+                                    {renderListGroupItem('mrn', 'MRN', resource?.mrn!, 'the MRN of the resource')}
+                                    {renderListGroupItem('version', 'Version', resource?.version!, 'a version of the resource in the format MAJOR.MINOR.PATCH')}
+                                    {renderListGroupItem('name', 'Name', resource?.name!, 'the name of the resource')}
+                                    {renderListGroupItem('description', 'Description', resource?.description!, 'a short description of the resource')}
+                                    {renderListGroupItem('location', 'Location', resource?.location!, 'a link to the original source of the resource')}
+                                </ListGroup>
+                            </div>
+                        )
+                        :
+                        <h6>No corresponding namespace</h6>
+                    }
+                </Row>
+            </Container>
+            {
+                namespaceInfo && 
+                <Modal show={namespaceModalShow} size="lg" onHide={handleClose}>
+                    <Modal.Body><Namespace namespaceInfo={namespaceInfo}></Namespace></Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+            }
+        </>
     );
   }

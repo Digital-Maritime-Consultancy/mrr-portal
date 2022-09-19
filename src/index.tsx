@@ -1,35 +1,15 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Namespace from './routes/namespace';
-import TreeView from './routes/treeView';
-import Namespaces from './routes/namespaces';
-import SearchView from './routes/searchView';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react-bootstrap-country-select/dist/react-bootstrap-country-select.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App />} >
-        <Route path="" element={<SearchView />} />
-        <Route path="searchView" element={<SearchView />} />
-        <Route path="treeView" element={<TreeView />} />
-        <Route
-          path="*"
-          element={
-            <main style={{ padding: "1rem" }}>
-              <p>There's nothing here!</p>
-            </main>
-          }
-        />
-      </Route>
-    </Routes>
-  </BrowserRouter>
+  <div><App /></div>
 );
 
 // If you want to start measuring performance in your app, pass a function

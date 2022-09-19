@@ -17,12 +17,56 @@ import { Configuration } from '../configuration';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
 import { NamespaceSyntaxDTO } from '../models';
+import { SyntaxCreationDTO } from '../models';
+import { SyntaxCreationResult } from '../models';
 /**
  * NamespaceSyntaxControllerApi - axios parameter creator
  * @export
  */
 export const NamespaceSyntaxControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @param {SyntaxCreationDTO} body 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createNamespaceSyntax: async (body: SyntaxCreationDTO, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'body' is not null or undefined
+            if (body === null || body === undefined) {
+                throw new RequiredError('body','Required parameter body was null or undefined when calling createNamespaceSyntax.');
+            }
+            const localVarPath = `/syntax/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions :AxiosRequestConfig = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                query.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.params) {
+                query.set(key, options.params[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers!['Content-Type'] === 'application/json';
+            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * Returns the syntax definition that applies to the given MRN
          * @param {string} mrn 
@@ -62,6 +106,45 @@ export const NamespaceSyntaxControllerApiAxiosParamCreator = function (configura
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} creationId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSyntaxCreationStatus: async (creationId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'creationId' is not null or undefined
+            if (creationId === null || creationId === undefined) {
+                throw new RequiredError('creationId','Required parameter creationId was null or undefined when calling getSyntaxCreationStatus.');
+            }
+            const localVarPath = `/syntax/status/{creationId}`
+                .replace(`{${"creationId"}}`, encodeURIComponent(String(creationId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions :AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                query.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.params) {
+                query.set(key, options.params[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -72,6 +155,19 @@ export const NamespaceSyntaxControllerApiAxiosParamCreator = function (configura
 export const NamespaceSyntaxControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
+         * 
+         * @param {SyntaxCreationDTO} body 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createNamespaceSyntax(body: SyntaxCreationDTO, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<string>>> {
+            const localVarAxiosArgs = await NamespaceSyntaxControllerApiAxiosParamCreator(configuration).createNamespaceSyntax(body, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
          * Returns the syntax definition that applies to the given MRN
          * @param {string} mrn 
          * @param {*} [options] Override http request option.
@@ -79,6 +175,19 @@ export const NamespaceSyntaxControllerApiFp = function(configuration?: Configura
          */
         async getNamespaceSyntaxForMrn(mrn: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<NamespaceSyntaxDTO>>> {
             const localVarAxiosArgs = await NamespaceSyntaxControllerApiAxiosParamCreator(configuration).getNamespaceSyntaxForMrn(mrn, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @param {string} creationId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSyntaxCreationStatus(creationId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<SyntaxCreationResult>>> {
+            const localVarAxiosArgs = await NamespaceSyntaxControllerApiAxiosParamCreator(configuration).getSyntaxCreationStatus(creationId, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -94,6 +203,15 @@ export const NamespaceSyntaxControllerApiFp = function(configuration?: Configura
 export const NamespaceSyntaxControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     return {
         /**
+         * 
+         * @param {SyntaxCreationDTO} body 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createNamespaceSyntax(body: SyntaxCreationDTO, options?: AxiosRequestConfig): Promise<AxiosResponse<string>> {
+            return NamespaceSyntaxControllerApiFp(configuration).createNamespaceSyntax(body, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Returns the syntax definition that applies to the given MRN
          * @param {string} mrn 
          * @param {*} [options] Override http request option.
@@ -101,6 +219,15 @@ export const NamespaceSyntaxControllerApiFactory = function (configuration?: Con
          */
         async getNamespaceSyntaxForMrn(mrn: string, options?: AxiosRequestConfig): Promise<AxiosResponse<NamespaceSyntaxDTO>> {
             return NamespaceSyntaxControllerApiFp(configuration).getNamespaceSyntaxForMrn(mrn, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} creationId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSyntaxCreationStatus(creationId: string, options?: AxiosRequestConfig): Promise<AxiosResponse<SyntaxCreationResult>> {
+            return NamespaceSyntaxControllerApiFp(configuration).getSyntaxCreationStatus(creationId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -113,6 +240,16 @@ export const NamespaceSyntaxControllerApiFactory = function (configuration?: Con
  */
 export class NamespaceSyntaxControllerApi extends BaseAPI {
     /**
+     * 
+     * @param {SyntaxCreationDTO} body 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NamespaceSyntaxControllerApi
+     */
+    public async createNamespaceSyntax(body: SyntaxCreationDTO, options?: AxiosRequestConfig) : Promise<AxiosResponse<string>> {
+        return NamespaceSyntaxControllerApiFp(this.configuration).createNamespaceSyntax(body, options).then((request) => request(this.axios, this.basePath));
+    }
+    /**
      * Returns the syntax definition that applies to the given MRN
      * @param {string} mrn 
      * @param {*} [options] Override http request option.
@@ -121,5 +258,15 @@ export class NamespaceSyntaxControllerApi extends BaseAPI {
      */
     public async getNamespaceSyntaxForMrn(mrn: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<NamespaceSyntaxDTO>> {
         return NamespaceSyntaxControllerApiFp(this.configuration).getNamespaceSyntaxForMrn(mrn, options).then((request) => request(this.axios, this.basePath));
+    }
+    /**
+     * 
+     * @param {string} creationId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NamespaceSyntaxControllerApi
+     */
+    public async getSyntaxCreationStatus(creationId: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<SyntaxCreationResult>> {
+        return NamespaceSyntaxControllerApiFp(this.configuration).getSyntaxCreationStatus(creationId, options).then((request) => request(this.axios, this.basePath));
     }
 }

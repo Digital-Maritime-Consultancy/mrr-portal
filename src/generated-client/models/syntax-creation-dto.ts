@@ -13,33 +13,33 @@
  */
 import { OwnerDTO } from './owner-dto';
 /**
- * Object representing a reference to another MRR
+ * Object that holds the necessary information for registering an MRN namespace syntax
  * @export
- * @interface MrrDTO
+ * @interface SyntaxCreationDTO
  */
-export interface MrrDTO {
+export interface SyntaxCreationDTO {
     /**
-     * The unique ID of the MRR
-     * @type {number}
-     * @memberof MrrDTO
-     */
-    id?: number;
-    /**
-     * The MRN namespace of the MRR
+     * 
      * @type {string}
-     * @memberof MrrDTO
+     * @memberof SyntaxCreationDTO
      */
-    mrnNamespace?: string;
+    namespace?: string;
     /**
-     * The endpoint of the MRR
+     * 
      * @type {string}
-     * @memberof MrrDTO
+     * @memberof SyntaxCreationDTO
      */
-    endpoint?: string;
+    parentNamespace?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SyntaxCreationDTO
+     */
+    abnfSyntax?: string;
     /**
      * 
      * @type {OwnerDTO}
-     * @memberof MrrDTO
+     * @memberof SyntaxCreationDTO
      */
-    owner?: OwnerDTO;
+    namespaceOwner?: OwnerDTO;
 }

@@ -108,11 +108,11 @@ export const MaritimeResourceControllerApiAxiosParamCreator = function (configur
         /**
          * Deletes the resource with the given MRN and version
          * @param {string} mrn 
-         * @param {number} version 
+         * @param {string} version 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteResourceByMrnAndVersion: async (mrn: string, version: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteResourceByMrnAndVersion: async (mrn: string, version: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'mrn' is not null or undefined
             if (mrn === null || mrn === undefined) {
                 throw new RequiredError('mrn','Required parameter mrn was null or undefined when calling deleteResourceByMrnAndVersion.');
@@ -318,11 +318,11 @@ export const MaritimeResourceControllerApiAxiosParamCreator = function (configur
         /**
          * Returns the resource with the given MRN and version
          * @param {string} mrn 
-         * @param {number} version 
+         * @param {string} version 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getResourceByMrnAndVersion: async (mrn: string, version: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getResourceByMrnAndVersion: async (mrn: string, version: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'mrn' is not null or undefined
             if (mrn === null || mrn === undefined) {
                 throw new RequiredError('mrn','Required parameter mrn was null or undefined when calling getResourceByMrnAndVersion.');
@@ -398,11 +398,11 @@ export const MaritimeResourceControllerApiFp = function(configuration?: Configur
         /**
          * Deletes the resource with the given MRN and version
          * @param {string} mrn 
-         * @param {number} version 
+         * @param {string} version 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteResourceByMrnAndVersion(mrn: string, version: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
+        async deleteResourceByMrnAndVersion(mrn: string, version: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
             const localVarAxiosArgs = await MaritimeResourceControllerApiAxiosParamCreator(configuration).deleteResourceByMrnAndVersion(mrn, version, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
@@ -466,11 +466,11 @@ export const MaritimeResourceControllerApiFp = function(configuration?: Configur
         /**
          * Returns the resource with the given MRN and version
          * @param {string} mrn 
-         * @param {number} version 
+         * @param {string} version 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getResourceByMrnAndVersion(mrn: string, version: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<MaritimeResourceDTO>>> {
+        async getResourceByMrnAndVersion(mrn: string, version: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<MaritimeResourceDTO>>> {
             const localVarAxiosArgs = await MaritimeResourceControllerApiAxiosParamCreator(configuration).getResourceByMrnAndVersion(mrn, version, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
@@ -507,11 +507,11 @@ export const MaritimeResourceControllerApiFactory = function (configuration?: Co
         /**
          * Deletes the resource with the given MRN and version
          * @param {string} mrn 
-         * @param {number} version 
+         * @param {string} version 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteResourceByMrnAndVersion(mrn: string, version: number, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
+        async deleteResourceByMrnAndVersion(mrn: string, version: string, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
             return MaritimeResourceControllerApiFp(configuration).deleteResourceByMrnAndVersion(mrn, version, options).then((request) => request(axios, basePath));
         },
         /**
@@ -555,11 +555,11 @@ export const MaritimeResourceControllerApiFactory = function (configuration?: Co
         /**
          * Returns the resource with the given MRN and version
          * @param {string} mrn 
-         * @param {number} version 
+         * @param {string} version 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getResourceByMrnAndVersion(mrn: string, version: number, options?: AxiosRequestConfig): Promise<AxiosResponse<MaritimeResourceDTO>> {
+        async getResourceByMrnAndVersion(mrn: string, version: string, options?: AxiosRequestConfig): Promise<AxiosResponse<MaritimeResourceDTO>> {
             return MaritimeResourceControllerApiFp(configuration).getResourceByMrnAndVersion(mrn, version, options).then((request) => request(axios, basePath));
         },
     };
@@ -595,12 +595,12 @@ export class MaritimeResourceControllerApi extends BaseAPI {
     /**
      * Deletes the resource with the given MRN and version
      * @param {string} mrn 
-     * @param {number} version 
+     * @param {string} version 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MaritimeResourceControllerApi
      */
-    public async deleteResourceByMrnAndVersion(mrn: string, version: number, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
+    public async deleteResourceByMrnAndVersion(mrn: string, version: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
         return MaritimeResourceControllerApiFp(this.configuration).deleteResourceByMrnAndVersion(mrn, version, options).then((request) => request(this.axios, this.basePath));
     }
     /**
@@ -648,12 +648,12 @@ export class MaritimeResourceControllerApi extends BaseAPI {
     /**
      * Returns the resource with the given MRN and version
      * @param {string} mrn 
-     * @param {number} version 
+     * @param {string} version 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MaritimeResourceControllerApi
      */
-    public async getResourceByMrnAndVersion(mrn: string, version: number, options?: AxiosRequestConfig) : Promise<AxiosResponse<MaritimeResourceDTO>> {
+    public async getResourceByMrnAndVersion(mrn: string, version: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<MaritimeResourceDTO>> {
         return MaritimeResourceControllerApiFp(this.configuration).getResourceByMrnAndVersion(mrn, version, options).then((request) => request(this.axios, this.basePath));
     }
 }
