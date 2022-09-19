@@ -11,7 +11,7 @@ export const Header = () => {
         <Row>
             <Col xs={1}>
                 <ButtonGroup className="d-flex">
-                  <Button href={'/'} variant="primary">Home</Button>
+                  <Button href={process.env.REACT_APP_FRONTEND} variant="primary">Home</Button>
                 </ButtonGroup>
             </Col>
             <Col xs={10}>
@@ -28,8 +28,8 @@ export const Header = () => {
                       {keycloak.tokenParsed?.manages_namespaces?.sort((a: any, b: any) => a.length - b.length).map((namespace: any, index: number) =>
                         <div key={index}>
                         <Dropdown.Header>{namespace}</Dropdown.Header>
-                        <Dropdown.Item href={`/register/resource/`+namespace}>Resource</Dropdown.Item>
-                        <Dropdown.Item href={`/register/namespace/`+namespace}>Namespace</Dropdown.Item>
+                        <Dropdown.Item href={"/"+process.env.REACT_APP_HOMEPATH +`register/resource/`+namespace}>Resource</Dropdown.Item>
+                        <Dropdown.Item href={"/"+process.env.REACT_APP_HOMEPATH + `register/namespace/`+namespace}>Namespace</Dropdown.Item>
                         <Dropdown.Divider></Dropdown.Divider>
                         </div>
                       )}

@@ -19,7 +19,7 @@ function App() {
       <ReactKeycloakProvider authClient={keycloak} initOptions={{onLoad: 'check-sso', autoRefreshToken: true, checkLoginIframe: true}}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={
+          <Route path={"/"+process.env.REACT_APP_HOMEPATH} element={
             <Container>
             <Header />
             <Row>
