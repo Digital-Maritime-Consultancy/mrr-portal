@@ -33,7 +33,7 @@ export const Header = () => {
                         <Dropdown.Divider></Dropdown.Divider>
                         </div>
                       )}
-                      <Dropdown.Item onClick={() => keycloak.login()}>Logout ({keycloak.tokenParsed!.preferred_username})</Dropdown.Item>
+                      <Dropdown.Item onClick={() => keycloak.logout()}>Logout ({keycloak.tokenParsed!.preferred_username})</Dropdown.Item>
                     </>}
                 </Dropdown.Menu>
               </Dropdown>

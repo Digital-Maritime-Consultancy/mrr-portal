@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, Container, Form, Row, Spinner } from "react-bootstrap";
 import CountrySelect from "react-bootstrap-country-select";
-import { useNavigate, useParams } from "react-router-dom";
-import { NamespaceSyntaxControllerApi, NamespaceSyntaxDTO, SyntaxCreationDTO, SyntaxCreationResultCodeEnum } from "../../generated-client";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { NamespaceSyntaxControllerApi, NamespaceSyntaxDTO, SyntaxCreationDTO, SyntaxCreationResult, SyntaxCreationResultCodeEnum } from "../../generated-client";
 import { useBeforeunload } from 'react-beforeunload';
 import { useAuth } from "../../auth/useAuth";
 import { ErrorNoticer } from "./errorNoticer";
+import keycloak from "../../auth/mrrKeycloak";
 
 export default function NamespaceRegistration() {
     const [validated, setValidated] = useState(false);
-    const {type, namespace} = useParams();
+    const {type, namespace, creationId} = useParams();
     const [ country, setCountry ] = useState<any>("");
     const [errorShow, setErrorShow] = useState(false);
     const [hangingMsgShow, setHangingMsgShow] = useState(false);
@@ -18,9 +19,9 @@ export default function NamespaceRegistration() {
     const [errorHeader, setErrorHeader] = useState("");
     const [errorContent, setErrorContent] = useState("");
     const { token, initialized: authInitialized } = useAuth();
-    const [creationId, setCreationId] = useState("");
     const [trialCount, setTrialCount] = useState(0);
     const syntaxApiHandler = new NamespaceSyntaxControllerApi();
+    const location = useLocation();
     const navigate = useNavigate();
 
     useBeforeunload((event) => {
@@ -45,53 +46,83 @@ export default function NamespaceRegistration() {
         return new Promise( resolve => setTimeout(resolve, ms) );
     }
 
+    const checkStatus = async(creationId: string, trialNumber: number, skipPause: boolean = false, result?: SyntaxCreationResult) => {
+        if (result) {
+            const code = result.code as SyntaxCreationResultCodeEnum;
+            if (code === SyntaxCreationResultCodeEnum.OK) {
+                setHanging(false);
+                navigate("/register/result/"+result.namespace);
+            } else if (code === SyntaxCreationResultCodeEnum.ERROR) {
+                setHanging(false);
+                setHangingMsgShow(false);
+                setErrorShow(true);
+                setErrorHeader(result.code! as string);
+                setErrorContent(result.message! as string);
+            } else {
+                // something weird happened
+            }
+            return ;
+        }
+        setTrialCount(trialNumber);
+        if (!skipPause) {
+            // 20 sec wait
+            await delay(20000);
+        }
+        
+        // Do something after
+        checkCreationStatus(creationId, trialNumber);
+    };
+
+    const checkCreationStatus = (creationId: string, trialNumber: number) => {
+        syntaxApiHandler.getSyntaxCreationStatus(creationId, {headers: { Authorization: `Bearer ${token}` }})
+            .then(res => 
+                {
+                    checkStatus(creationId, trialNumber + 1, false, (res.data as SyntaxCreationResult).code === SyntaxCreationResultCodeEnum.CREATING ? undefined : res.data);
+                }
+            )
+            .catch(err => {
+                setHanging(false);
+                setErrorShow(true);
+                if (err.response) {
+                    if (err.response.data) {
+                        setErrorHeader(err.response.data.error);
+                        setErrorContent(err.response.data.message);
+                    } else {
+                        setErrorHeader(err.response.statusText);
+                        setErrorContent(err.message);
+                    }
+                    
+                    if (err.response.status === 401) {
+                        alert("Token expired - You need to leave this page and login again!");
+                        keycloak.login();
+                    }
+                } else {
+                    setErrorHeader("Something went wrong");
+                    setErrorContent("Server can't process your input with some reason.");
+                }
+            });
+    }
+
     const handleSubmit = async(e: any) => {
         if (validate(value)) {
             const convertedAbnf = value.abnfSyntax?.replaceAll('\n', '\r\n');
-            setValue({...value, abnfSyntax: convertedAbnf! + convertedAbnf!.endsWith('\r\n') ? '': '\r\n'})
+            setValue({...value, abnfSyntax: convertedAbnf! + convertedAbnf!.endsWith('\r\n') ? '': '\r\n'});
 
             // call the api
             syntaxApiHandler.createNamespaceSyntax(value, {headers: { Authorization: `Bearer ${token}` }})
                 .then(async (res) => {
-                    // show error
+                    navigate('/register/namespace/'+namespace+'/'+res.data);
+                    /*
+                    // show status
                     setHangingMsgShow(true);
                     // hanging and disable input
                     setHanging(true);
-                    setCreationId(res.data);
-                    let done = false;
-                    while (!done) {
-                        // 20 sec wait
-                        await delay(5000);
-                        let count = 0;
-                        // Do something after
-                        syntaxApiHandler.getSyntaxCreationStatus(res.data, {headers: { Authorization: `Bearer ${token}` }})
-                            .then(res => {
-                                count += 1;
-                                setTrialCount(count);
-                                const code = res.data.code as SyntaxCreationResultCodeEnum;
-                                if (code === SyntaxCreationResultCodeEnum.CREATING) {
-                                } else if (code === SyntaxCreationResultCodeEnum.OK) {
-                                    done = true;
-                                    setHanging(false);
-                                    navigate("/register/result/"+value.namespace);
-                                } else if (code === SyntaxCreationResultCodeEnum.ERROR) {
-                                    done = true;
-                                    setHanging(false);
-                                    setHangingMsgShow(false);
-                                    setErrorShow(true);
-                                    setErrorHeader(res.data.code! as string);
-                                    setErrorContent(res.data.message! as string);
-                                } else {
-                                    // something weird happened
-                                }
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                console.log(err.response.status);
-                            });
-                    }
+                    
+                    checkStatus(res.data, 0);
+                    */
                 })
                 .catch(err => {
+                    setHanging(false);
                     setErrorShow(true);
                     if (err.response && err.response.data) {
                         setErrorHeader(err.response.data.error);
@@ -111,6 +142,22 @@ export default function NamespaceRegistration() {
         e.preventDefault();
     }
 
+    useEffect(() => {
+        if (creationId) {
+            const uuidRegex = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+            if (uuidRegex.test(creationId)) {
+                setHanging(true);
+                setHangingMsgShow(true);
+                checkStatus(creationId, 0, true);
+            } else {
+                setErrorShow(true);
+                setErrorHeader("Given creation ID is wrong");
+                setErrorContent("You need to use a valid creation ID generated from the MRR.");
+            }
+        }
+        setValue( {...value, parentNamespace: namespace});
+    }, [namespace, creationId]);
+
     return (
         <Container style={{ textAlign: "left", padding: "1rem"}}>
             {errorShow && 
@@ -120,7 +167,7 @@ export default function NamespaceRegistration() {
             }
             {hangingMsgShow && 
                 <ErrorNoticer variant="warning" header={"Please hold this page! MRR is now validating your syntax"}
-                    content={"More than 5 mins of processing time is expected to complete the validation. We strongly encourage you to leave this page. This page will check the process and notify you when it is done. Number of checking: " + (trialCount)}
+                    content={"More than 5 minutes of processing time is expected. We strongly encourage you to don't leave this page before it is done. Number of checking: " + (trialCount)}
                     setErrorShow={setErrorShow} />
             }
             {namespace &&
