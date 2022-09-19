@@ -2,6 +2,9 @@
 
 This front-end project is for MRR to demonstrate its functionalities.
 
+## Prerequisite
+This project uses Node with v14.18.x and NPM with v7.5.x.
+
 ## Available Scripts
 
 In the project directory, you can run:
