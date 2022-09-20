@@ -2,8 +2,8 @@
 
 This front-end project is for MRR to demonstrate its functionalities.
 
-## Prerequisite
-This project uses Node with v14.18.x and NPM with v7.5.x.
+## Prerequisites
+This project uses Node v14.x and Yarn.
 
 ## Available Scripts
 
