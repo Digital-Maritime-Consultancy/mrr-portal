@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, Container, Form, Row, Spinner } from "react-bootstrap";
+import { Button, Container, Form, Row, Spinner } from "react-bootstrap";
 import CountrySelect from "react-bootstrap-country-select";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { NamespaceSyntaxControllerApi, NamespaceSyntaxDTO, SyntaxCreationDTO, SyntaxCreationResult, SyntaxCreationResultCodeEnum } from "../../generated-client";
+import { NamespaceSyntaxControllerApi, SyntaxCreationDTO, SyntaxCreationResult, SyntaxCreationResultCodeEnum } from "../../generated-client";
 import { useBeforeunload } from 'react-beforeunload';
 import { useAuth } from "../../auth/useAuth";
 import { ErrorNoticer } from "./errorNoticer";
 import keycloak from "../../auth/mrrKeycloak";
+import { IContext, Mode } from "../../App";
 
-export default function NamespaceRegistration() {
+export interface INamespaceRegistrationProp{
+    context: IContext;
+    setContext: (context: IContext) => void;
+}
+
+export const NamespaceRegistration = ({context, setContext}: INamespaceRegistrationProp) => {
     const [validated, setValidated] = useState(false);
-    const {type, namespace, creationId} = useParams();
     const [ country, setCountry ] = useState<any>("");
     const [errorShow, setErrorShow] = useState(false);
     const [hangingMsgShow, setHangingMsgShow] = useState(false);
@@ -21,8 +25,6 @@ export default function NamespaceRegistration() {
     const { token, initialized: authInitialized } = useAuth();
     const [trialCount, setTrialCount] = useState(0);
     const syntaxApiHandler = new NamespaceSyntaxControllerApi();
-    const location = useLocation();
-    const navigate = useNavigate();
 
     useBeforeunload((event) => {
         if (hanging) {
@@ -51,7 +53,7 @@ export default function NamespaceRegistration() {
             const code = result.code as SyntaxCreationResultCodeEnum;
             if (code === SyntaxCreationResultCodeEnum.OK) {
                 setHanging(false);
-                navigate("/register/result/"+result.namespace);
+                setContext({mode: Mode.SHOW_RESULT, namespace: result.namespace});
             } else if (code === SyntaxCreationResultCodeEnum.ERROR) {
                 setHanging(false);
                 setHangingMsgShow(false);
@@ -111,15 +113,7 @@ export default function NamespaceRegistration() {
             // call the api
             syntaxApiHandler.createNamespaceSyntax(value, {headers: { Authorization: `Bearer ${token}` }})
                 .then(async (res) => {
-                    navigate('/register/namespace/'+namespace+'/'+res.data);
-                    /*
-                    // show status
-                    setHangingMsgShow(true);
-                    // hanging and disable input
-                    setHanging(true);
-                    
-                    checkStatus(res.data, 0);
-                    */
+                    setContext({mode: Mode.REGISTER_NAMESPACE, namespace: context.namespace, creationId: res.data});
                 })
                 .catch(err => {
                     setHanging(false);
@@ -143,20 +137,20 @@ export default function NamespaceRegistration() {
     }
 
     useEffect(() => {
-        if (creationId) {
+        if (context.creationId) {
             const uuidRegex = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
-            if (uuidRegex.test(creationId)) {
+            if (uuidRegex.test(context.creationId)) {
                 setHanging(true);
                 setHangingMsgShow(true);
-                checkStatus(creationId, 0, true);
+                checkStatus(context.creationId, 0, true);
             } else {
                 setErrorShow(true);
                 setErrorHeader("Given creation ID is wrong");
                 setErrorContent("You need to use a valid creation ID generated from the MRR.");
             }
         }
-        setValue( {...value, parentNamespace: namespace});
-    }, [namespace, creationId]);
+        setValue( {...value, parentNamespace: context.namespace});
+    }, [context]);
 
     return (
         <Container style={{ textAlign: "left", padding: "1rem"}}>
@@ -170,7 +164,7 @@ export default function NamespaceRegistration() {
                     content={"More than 5 minutes of processing time is expected. We strongly encourage you to don't leave this page before it is done. Number of checking: " + (trialCount)}
                     setErrorShow={setErrorShow} />
             }
-            {namespace &&
+            {context.namespace &&
             <>
                 <Row>
                 <h3>Register namespace</h3>
@@ -179,7 +173,7 @@ export default function NamespaceRegistration() {
                     <Form validated={validated && typeof country !=='string'} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formNamespace">
                             <Form.Label>Namespace</Form.Label>
-                            <Form.Control type="text" required placeholder={namespace + ':...'} onChange={
+                            <Form.Control type="text" required placeholder={context.namespace + ':...'} onChange={
                                 (e: any)=> setValue({...value, namespace: e.target.value})
                             } disabled={hanging}/>
                             <Form.Control.Feedback type="invalid">This field is mandatory</Form.Control.Feedback>

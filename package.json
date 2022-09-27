@@ -1,8 +1,7 @@
 {
   "name": "mrr-portal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
-  "proxy": "http://localhost:8080/",
   "dependencies": {
     "@react-keycloak/web": "^3.4.0",
     "axios": "^0.27.2",
