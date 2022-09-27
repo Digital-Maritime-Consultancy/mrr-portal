@@ -32,7 +32,6 @@ export const ResourceRegistration = ({context, setContext}: IResourceRegistratio
     const syntaxApiHandler = new NamespaceSyntaxControllerApi();
 
     useEffect(() => {
-        console.log(context);
         if (context.namespace!.length) {
             syntaxApiHandler.getNamespaceSyntaxForMrn(context.namespace!)
             .then(value => {

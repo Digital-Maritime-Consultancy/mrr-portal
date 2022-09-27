@@ -16,7 +16,7 @@ export const Header = ({context, setContext}: IHeaderProp) => {
       <Row>
           <Col xs={1}>
               <ButtonGroup className="d-flex">
-                <Button href={'/'} variant="primary">Home</Button>
+                <Button href={process.env.REACT_APP_FRONTEND} variant="primary">Home</Button>
               </ButtonGroup>
           </Col>
           <Col xs={10}>
