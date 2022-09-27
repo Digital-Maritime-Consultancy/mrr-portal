@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/mrr-portal/static/css/main.4f900535.css",
-    "main.js": "/mrr-portal/static/js/main.52b28a25.js",
+    "main.js": "/mrr-portal/static/js/main.5f46afdc.js",
     "static/js/988.a4ba0028.chunk.js": "/mrr-portal/static/js/988.a4ba0028.chunk.js",
     "index.html": "/mrr-portal/index.html",
     "main.4f900535.css.map": "/mrr-portal/static/css/main.4f900535.css.map",
-    "main.52b28a25.js.map": "/mrr-portal/static/js/main.52b28a25.js.map",
+    "main.5f46afdc.js.map": "/mrr-portal/static/js/main.5f46afdc.js.map",
     "988.a4ba0028.chunk.js.map": "/mrr-portal/static/js/988.a4ba0028.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.4f900535.css",
-    "static/js/main.52b28a25.js"
+    "static/js/main.5f46afdc.js"
   ]
 }
