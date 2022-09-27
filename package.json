@@ -1,8 +1,13 @@
 {
   "name": "mrr-portal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
-  "proxy": "http://localhost:8080/",
+  "homepage": "https://Digital-Maritime-Consultancy.github.io/mrr-portal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Digital-Maritime-Consultancy/mrr-portal.git"
+  },
+  "license": "MIT",
   "dependencies": {
     "@react-keycloak/web": "^3.4.0",
     "axios": "^0.27.2",
@@ -27,7 +32,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -56,6 +63,7 @@
     "@types/node": "^18.7.14",
     "@types/react": "^18.0.0",
     "@types/react-beforeunload": "^2.1.1",
-    "@types/react-dom": "^18.0.0"
+    "@types/react-dom": "^18.0.0",
+    "gh-pages": "^4.0.0"
   }
 }

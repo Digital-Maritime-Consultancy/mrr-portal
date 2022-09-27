@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, Container, Form, Modal, Row } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { Button, Container, Form, Modal, Row } from "react-bootstrap";
+import { IContext, Mode } from "../../App";
 import { useAuth } from "../../auth/useAuth";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../../generated-client";
 import { checkMrnSyntax, checkUrlSyntax } from "../../util/syntaxCheck";
 import Namespace from "../namespace";
 import { ErrorNoticer } from "./errorNoticer";
 
-export default function ResourceRegistration() {
+export interface IResourceRegistrationProp{
+    context: IContext;
+    setContext: (context: IContext) => void;
+}
+
+export const ResourceRegistration = ({context, setContext}: IResourceRegistrationProp) => {
     const [value, setValue] = useState<MaritimeResourceDTO>({});
     const [validated, setValidated] = useState(false);
     const [mrnValidity, setMrnValidity] = useState(false);
@@ -26,23 +31,20 @@ export default function ResourceRegistration() {
     const resourceApiHandler = new MaritimeResourceControllerApi();
     const syntaxApiHandler = new NamespaceSyntaxControllerApi();
 
-    const {namespace} = useParams();
-    const navigate = useNavigate();
-
     useEffect(() => {
-        if (namespace!.length) {
-            syntaxApiHandler.getNamespaceSyntaxForMrn(namespace!)
+        if (context.namespace!.length) {
+            syntaxApiHandler.getNamespaceSyntaxForMrn(context.namespace!)
             .then(value => {
                 setNamespaceInfo(value.data as NamespaceSyntaxDTO);
             })
             .catch(() => setNamespaceInfo(undefined));
         }
-      }, [namespace, token]);
+      }, [context.namespace, token]);
 
     const handleSubmit = (e: any) => {
         if (validate(value)) {
             resourceApiHandler.createResource(value, {headers: { Authorization: `Bearer ${token}` }})
-                .then((res) => navigate("/register/result/"+res.data.mrn))
+                .then((res) => setContext({mode: Mode.SHOW_RESULT, namespace: res.data.mrn, version: res.data.version}))
                 .catch(err => {
                     setErrorShow(true);
                     setErrorHeader(err.response.data.error);
@@ -97,7 +99,7 @@ export default function ResourceRegistration() {
                     <Form validated={validated} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formMRN">
                         <Form.Label>Maritime Resource Name (MRN)</Form.Label>
-                        <Form.Control type="text" required onChange={checkMrnInput} defaultValue={namespace + ':'} isInvalid={!mrnValidity} />
+                        <Form.Control type="text" required onChange={checkMrnInput} placeholder={context.namespace + ':'} isInvalid={!mrnValidity} />
                         <Form.Control.Feedback type="invalid">Invalid MRN for '{namespaceInfo?.namespace}'</Form.Control.Feedback>
                         <Form.Text className="text-muted">
                         MRN of resource complying with the <a className={"fw-bold"} onClick={handleShow}>{namespaceInfo?.namespace} namespace syntax</a>
