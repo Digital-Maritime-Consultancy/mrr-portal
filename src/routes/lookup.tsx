@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Form, Row } from "react-bootstrap";
+import { Button, Form, InputGroup, Row } from "react-bootstrap";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../generated-client";
 import Namespace from "./namespace";
 import Resource from "./resource";
+import * as Icon from 'react-bootstrap-icons';
 
 export default function LookupComponent() {
   const [mrn, setMrn] = useState("");
@@ -12,8 +13,8 @@ export default function LookupComponent() {
 
   const syntaxApiHandler = new NamespaceSyntaxControllerApi();
   const resourceApiHandler = new MaritimeResourceControllerApi();
-
-  useEffect(() => {
+  
+  const lookup = (mrn: string) => {
     if (mrn.length && connected >= 0) {
       resourceApiHandler.getAllResourcesForMrn(mrn)
         .then((res: any) => {setConnected(1); return res.data.content;})
@@ -26,21 +27,29 @@ export default function LookupComponent() {
       setResources([]);
       setNamespaceInfo(undefined);
     }
-  }, [mrn]);
-  
+  }
+
   return (
     <div>
       <Row>
-          <Form onSubmit={(e)=>{
+          <Form className="text-start" onSubmit={(e)=>{
             e.preventDefault();
             }}>
-            <Form.Group className="mb-3" controlId="searchMrn">
-              <Form.Label></Form.Label>
-              <Form.Control type="text" placeholder="Lookup a resource by MRN"
-                value={mrn}
-                onChange={(e) => setMrn(e.target.value)}
-              />
-            </Form.Group>
+            <Form.Text>
+              Type MRN of resource or namespace to lookup registered information associated with. Try 'urn:mrn' for your first trial.
+            </Form.Text>
+            <InputGroup className="mb-3">
+                <Form.Control
+                  placeholder="Lookup a resource by MRN"
+                  type="text"
+                  value={mrn}
+                  onChange={(e) => setMrn(e.target.value)}
+                  onKeyUp={(e) => e.key === "Enter" && lookup(mrn)}
+                />
+                <Button onClick={(e)=>lookup(mrn)} variant="primary" id="button-addon2">
+                  <Icon.Search />
+                </Button>
+          </InputGroup>
           </Form>
         </Row>
         { connected > 0 && resources.length > 0 && namespaceInfo &&

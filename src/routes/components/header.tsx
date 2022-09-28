@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Col, Dropdown, Row } from "react-bootstrap";
 import { IContext, Mode } from "../../App";
 import keycloak from "../../auth/mrrKeycloak";
 import { useAuth } from "../../auth/useAuth";
+import * as Icon from 'react-bootstrap-icons';
 
 export interface IHeaderProp{
   context: IContext;
@@ -13,10 +14,12 @@ export const Header = ({context, setContext}: IHeaderProp) => {
   const { token, initialized: authInitialized } = useAuth();
   
   return (
-      <Row>
+      <Row className="pb-5">
           <Col xs={1}>
               <ButtonGroup className="d-flex">
-                <Button href={process.env.REACT_APP_FRONTEND} variant="primary">Home</Button>
+                <Button href={process.env.REACT_APP_FRONTEND} variant="secondary">
+                  <Icon.HouseFill />
+                </Button>
               </ButtonGroup>
           </Col>
           <Col xs={10}>
@@ -25,7 +28,7 @@ export const Header = ({context, setContext}: IHeaderProp) => {
           <Col xs={1}>
             <Dropdown align="end" className="d-flex">
               <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Add
+                <Icon.PlusLg />
               </Dropdown.Toggle>
               <Dropdown.Menu>
                   {!keycloak.authenticated && <Dropdown.Item onClick={() => keycloak.login()}>Login</Dropdown.Item>}
