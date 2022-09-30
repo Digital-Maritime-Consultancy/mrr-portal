@@ -15,8 +15,8 @@ export interface IResourceRegistrationProp{
 export const ResourceRegistration = ({context, setContext}: IResourceRegistrationProp) => {
     const [value, setValue] = useState<MaritimeResourceDTO>({});
     const [validated, setValidated] = useState(false);
-    const [mrnValidity, setMrnValidity] = useState(false);
-    const [urlValidity, setUrlValidity] = useState(false);
+    const [mrnValidity, setMrnValidity] = useState(true);
+    const [urlValidity, setUrlValidity] = useState(true);
     const [namespaceInfo, setNamespaceInfo] = useState<NamespaceSyntaxDTO | undefined>();
     const [namespaceModalShow, setNamespaceModalShow] = useState(false);
     const [errorShow, setErrorShow] = useState(false);
