@@ -100,9 +100,9 @@ export const ResourceRegistration = ({context, setContext}: IResourceRegistratio
                     <Form.Group className="mb-3" controlId="formMRN">
                         <Form.Label>Maritime Resource Name (MRN)</Form.Label>
                         <Form.Control type="text" required onChange={checkMrnInput} placeholder={context.namespace + ':'} isInvalid={!mrnValidity} />
-                        <Form.Control.Feedback type="invalid">Invalid MRN for '{namespaceInfo?.namespace}'</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">Invalid MRN for '{namespaceInfo?.mrnNamespace}'</Form.Control.Feedback>
                         <Form.Text className="text-muted">
-                        MRN of resource complying with the <a className={"fw-bold"} onClick={handleShow}>{namespaceInfo?.namespace} namespace syntax</a>
+                        MRN of resource complying with the <a className={"fw-bold"} onClick={handleShow}>{namespaceInfo?.mrnNamespace} namespace syntax</a>
                         </Form.Text>
                     </Form.Group>
 

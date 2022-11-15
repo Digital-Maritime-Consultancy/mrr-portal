@@ -58,7 +58,7 @@ export const MaritimeResourceControllerApiAxiosParamCreator = function (configur
             localVarUrlObj.search = (new URLSearchParams(query)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers!['Content-Type'] === 'application/json';
+            const needsSerialization = (typeof body !== "string") || (localVarRequestOptions.headers && localVarRequestOptions.headers['Content-Type'] === 'application/json');
             localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
 
             return {
@@ -151,11 +151,14 @@ export const MaritimeResourceControllerApiAxiosParamCreator = function (configur
             };
         },
         /**
-         * Returns the list containing all registered resources. Is only here for testing purposes and will be removed in the future.
+         * Returns a page of all registered resources. Is only here for testing purposes and will be removed in the future.
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllMaritimeResources: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllMaritimeResources: async (page?: number, size?: number, sort?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/resource/all`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -166,6 +169,72 @@ export const MaritimeResourceControllerApiAxiosParamCreator = function (configur
             const localVarRequestOptions :AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+            if (sort) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                query.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.params) {
+                query.set(key, options.params[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns a page of all registered resources under the given MRN namespace.
+         * @param {string} namespace 
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllMaritimeResourcesUnderNamespace: async (namespace: string, page?: number, size?: number, sort?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'namespace' is not null or undefined
+            if (namespace === null || namespace === undefined) {
+                throw new RequiredError('namespace','Required parameter namespace was null or undefined when calling getAllMaritimeResourcesUnderNamespace.');
+            }
+            const localVarPath = `/resource/all/{namespace}`
+                .replace(`{${"namespace"}}`, encodeURIComponent(String(namespace)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions :AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+            if (sort) {
+                localVarQueryParameter['sort'] = sort;
+            }
 
             const query = new URLSearchParams(localVarUrlObj.search);
             for (const key in localVarQueryParameter) {
@@ -410,12 +479,31 @@ export const MaritimeResourceControllerApiFp = function(configuration?: Configur
             };
         },
         /**
-         * Returns the list containing all registered resources. Is only here for testing purposes and will be removed in the future.
+         * Returns a page of all registered resources. Is only here for testing purposes and will be removed in the future.
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllMaritimeResources(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<Array<MaritimeResourceDTO>>>> {
-            const localVarAxiosArgs = await MaritimeResourceControllerApiAxiosParamCreator(configuration).getAllMaritimeResources(options);
+        async getAllMaritimeResources(page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<PageMaritimeResourceDTO>>> {
+            const localVarAxiosArgs = await MaritimeResourceControllerApiAxiosParamCreator(configuration).getAllMaritimeResources(page, size, sort, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * Returns a page of all registered resources under the given MRN namespace.
+         * @param {string} namespace 
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllMaritimeResourcesUnderNamespace(namespace: string, page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<PageMaritimeResourceDTO>>> {
+            const localVarAxiosArgs = await MaritimeResourceControllerApiAxiosParamCreator(configuration).getAllMaritimeResourcesUnderNamespace(namespace, page, size, sort, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -515,12 +603,27 @@ export const MaritimeResourceControllerApiFactory = function (configuration?: Co
             return MaritimeResourceControllerApiFp(configuration).deleteResourceByMrnAndVersion(mrn, version, options).then((request) => request(axios, basePath));
         },
         /**
-         * Returns the list containing all registered resources. Is only here for testing purposes and will be removed in the future.
+         * Returns a page of all registered resources. Is only here for testing purposes and will be removed in the future.
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllMaritimeResources(options?: AxiosRequestConfig): Promise<AxiosResponse<Array<MaritimeResourceDTO>>> {
-            return MaritimeResourceControllerApiFp(configuration).getAllMaritimeResources(options).then((request) => request(axios, basePath));
+        async getAllMaritimeResources(page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<AxiosResponse<PageMaritimeResourceDTO>> {
+            return MaritimeResourceControllerApiFp(configuration).getAllMaritimeResources(page, size, sort, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns a page of all registered resources under the given MRN namespace.
+         * @param {string} namespace 
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllMaritimeResourcesUnderNamespace(namespace: string, page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<AxiosResponse<PageMaritimeResourceDTO>> {
+            return MaritimeResourceControllerApiFp(configuration).getAllMaritimeResourcesUnderNamespace(namespace, page, size, sort, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns a page of all versions of the resource with the given MRN
@@ -604,13 +707,29 @@ export class MaritimeResourceControllerApi extends BaseAPI {
         return MaritimeResourceControllerApiFp(this.configuration).deleteResourceByMrnAndVersion(mrn, version, options).then((request) => request(this.axios, this.basePath));
     }
     /**
-     * Returns the list containing all registered resources. Is only here for testing purposes and will be removed in the future.
+     * Returns a page of all registered resources. Is only here for testing purposes and will be removed in the future.
+     * @param {number} [page] Zero-based page index (0..N)
+     * @param {number} [size] The size of the page to be returned
+     * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MaritimeResourceControllerApi
      */
-    public async getAllMaritimeResources(options?: AxiosRequestConfig) : Promise<AxiosResponse<Array<MaritimeResourceDTO>>> {
-        return MaritimeResourceControllerApiFp(this.configuration).getAllMaritimeResources(options).then((request) => request(this.axios, this.basePath));
+    public async getAllMaritimeResources(page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig) : Promise<AxiosResponse<PageMaritimeResourceDTO>> {
+        return MaritimeResourceControllerApiFp(this.configuration).getAllMaritimeResources(page, size, sort, options).then((request) => request(this.axios, this.basePath));
+    }
+    /**
+     * Returns a page of all registered resources under the given MRN namespace.
+     * @param {string} namespace 
+     * @param {number} [page] Zero-based page index (0..N)
+     * @param {number} [size] The size of the page to be returned
+     * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MaritimeResourceControllerApi
+     */
+    public async getAllMaritimeResourcesUnderNamespace(namespace: string, page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig) : Promise<AxiosResponse<PageMaritimeResourceDTO>> {
+        return MaritimeResourceControllerApiFp(this.configuration).getAllMaritimeResourcesUnderNamespace(namespace, page, size, sort, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * Returns a page of all versions of the resource with the given MRN

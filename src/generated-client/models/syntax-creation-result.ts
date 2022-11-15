@@ -12,31 +12,31 @@
  * Do not edit the class manually.
  */
 /**
- * 
+ * Object representing the result of a namespace syntax creation
  * @export
  * @interface SyntaxCreationResult
  */
 export interface SyntaxCreationResult {
     /**
-     * 
+     * The status of the creation
      * @type {string}
      * @memberof SyntaxCreationResult
      */
     code?: SyntaxCreationResultCodeEnum;
     /**
-     * 
+     * The MRN namespace of the created syntax
      * @type {string}
      * @memberof SyntaxCreationResult
      */
     namespace?: string;
     /**
-     * 
+     * A regular expression generated from the created syntax
      * @type {string}
      * @memberof SyntaxCreationResult
      */
     regex?: string;
     /**
-     * 
+     * An error message that is set if the creation results in an error
      * @type {string}
      * @memberof SyntaxCreationResult
      */
