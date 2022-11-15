@@ -3,6 +3,7 @@ export * from './mrr-dto';
 export * from './namespace-syntax-dto';
 export * from './owner-dto';
 export * from './page-maritime-resource-dto';
+export * from './page-namespace-syntax-dto';
 export * from './pageable-object';
 export * from './sort-object';
 export * from './syntax-creation-dto';

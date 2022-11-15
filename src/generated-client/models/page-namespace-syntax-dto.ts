@@ -11,79 +11,79 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { MaritimeResourceDTO } from './maritime-resource-dto';
+import { NamespaceSyntaxDTO } from './namespace-syntax-dto';
 import { PageableObject } from './pageable-object';
 import { SortObject } from './sort-object';
 /**
  * 
  * @export
- * @interface PageMaritimeResourceDTO
+ * @interface PageNamespaceSyntaxDTO
  */
-export interface PageMaritimeResourceDTO {
+export interface PageNamespaceSyntaxDTO {
     /**
      * 
      * @type {number}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     totalPages?: number;
     /**
      * 
      * @type {number}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     totalElements?: number;
     /**
      * 
      * @type {number}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     size?: number;
     /**
      * 
-     * @type {Array<MaritimeResourceDTO>}
-     * @memberof PageMaritimeResourceDTO
+     * @type {Array<NamespaceSyntaxDTO>}
+     * @memberof PageNamespaceSyntaxDTO
      */
-    content?: Array<MaritimeResourceDTO>;
+    content?: Array<NamespaceSyntaxDTO>;
     /**
      * 
      * @type {number}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     number?: number;
     /**
      * 
      * @type {SortObject}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     sort?: SortObject;
     /**
      * 
      * @type {number}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     numberOfElements?: number;
     /**
      * 
      * @type {PageableObject}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     pageable?: PageableObject;
     /**
      * 
      * @type {boolean}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     first?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     last?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof PageMaritimeResourceDTO
+     * @memberof PageNamespaceSyntaxDTO
      */
     empty?: boolean;
 }

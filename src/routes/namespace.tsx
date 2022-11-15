@@ -53,16 +53,16 @@ export default function Namespace({namespaceInfo}: INamespaceProp) {
             <Row>
                 { namespaceInfo ?
                     <ListGroup variant="flush">
-                        {renderListGroupItem('mrn-namespace', 'Namespace', namespaceInfo?.namespace!, 'assigned MRN namespace')}
+                        {renderListGroupItem('mrn-namespace', 'Namespace', namespaceInfo?.mrnNamespace!, 'assigned MRN namespace')}
                         {renderListGroupItem('abnf-syntax', 'ABNF syntax', namespaceInfo?.abnfSyntax!, 'a full syntax for MRNs belonging to that namespace')}
                         {renderListGroupItem('regex', 'Regular expression', namespaceInfo?.regex!, 'a regular expression form equivalent to the ABNF syntax')}
                         {renderListGroupItem('regex', 'Namespace owner', undefined, 'information of the MRN namespace owner', <ul>
-                            {renderItems('owner-name', 'Name', namespaceInfo?.namespaceOwner!.name!, 'name of the owner')}
-                            {renderItems('owner-url', 'URL', namespaceInfo?.namespaceOwner!.url!, 'URL for the website of the owner')}
-                            {renderItems('owner-address', 'Address', namespaceInfo?.namespaceOwner!.address!, 'address of the owner')}
-                            {renderItems('owner-country', 'Country', namespaceInfo?.namespaceOwner!.country!, 'country of the owner')}
-                            {renderItems('owner-email', 'email', namespaceInfo?.namespaceOwner!.email!, 'mail for the point of contact of the owner')}
-                            {renderItems('owner-phone', 'Phone', namespaceInfo?.namespaceOwner!.phone!, 'phone number for the point of contact of the owner')}
+                            {renderItems('owner-name', 'Name', namespaceInfo?.owner!.name!, 'name of the owner')}
+                            {renderItems('owner-url', 'URL', namespaceInfo?.owner!.url!, 'URL for the website of the owner')}
+                            {renderItems('owner-address', 'Address', namespaceInfo?.owner!.address!, 'address of the owner')}
+                            {renderItems('owner-country', 'Country', namespaceInfo?.owner!.country!, 'country of the owner')}
+                            {renderItems('owner-email', 'email', namespaceInfo?.owner!.email!, 'mail for the point of contact of the owner')}
+                            {renderItems('owner-phone', 'Phone', namespaceInfo?.owner!.phone!, 'phone number for the point of contact of the owner')}
                         </ul>)}
                         
                     </ListGroup>:

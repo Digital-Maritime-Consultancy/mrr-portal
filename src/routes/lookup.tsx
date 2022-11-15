@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Form, InputGroup, Row } from "react-bootstrap";
+import { Accordion, Button, Form, InputGroup, Row } from "react-bootstrap";
 import { MaritimeResourceControllerApi, MaritimeResourceDTO, NamespaceSyntaxControllerApi, NamespaceSyntaxDTO } from "../generated-client";
 import Namespace from "./namespace";
 import Resource from "./resource";
@@ -10,19 +10,39 @@ export default function LookupComponent() {
   const [resources, setResources] = useState<MaritimeResourceDTO[]>([]);
   const [connected, setConnected] = useState(0);
   const [namespaceInfo, setNamespaceInfo] = useState<NamespaceSyntaxDTO | undefined>();
+  const [childNS, setChildNS] = useState<NamespaceSyntaxDTO[]> ([]);
+  const [received, setReceived] = useState(false);
 
   const syntaxApiHandler = new NamespaceSyntaxControllerApi();
   const resourceApiHandler = new MaritimeResourceControllerApi();
   
+  const fetchNamespaceInfo = (mrnFromInput: string, data: any) => {
+    const ns = data.content;
+    if (ns && ns.length > 0) {
+      const coreNs = ns.filter((e: NamespaceSyntaxDTO) => e.mrnNamespace === mrnFromInput).pop();
+      if (coreNs) {
+        setNamespaceInfo(coreNs);
+        const children = ns.filter((e: NamespaceSyntaxDTO) => e.mrnNamespace !== mrnFromInput);
+        setChildNS(children);
+      }
+    }
+  }
+
   const lookup = (mrn: string) => {
     if (mrn.length && connected >= 0) {
+      // initialize query results
+      setResources([]);
+      setNamespaceInfo(undefined);
+
+      // get to backend
       resourceApiHandler.getAllResourcesForMrn(mrn)
         .then((res: any) => {setConnected(1); return res.data.content;})
         .then((data: MaritimeResourceDTO[]) => setResources(data))
         .catch(() => {setConnected(-1); setResources([])});
-      syntaxApiHandler.getNamespaceSyntaxForMrn(mrn)
-      .then(value => setNamespaceInfo(value.data as NamespaceSyntaxDTO))
+      syntaxApiHandler.getAllNamespaceSyntaxesUnderNamespace(mrn)
+      .then(value => fetchNamespaceInfo(mrn, value.data))
       .catch(() => setNamespaceInfo(undefined));
+      setReceived(true);
     } else {
       setResources([]);
       setNamespaceInfo(undefined);
@@ -43,7 +63,7 @@ export default function LookupComponent() {
                   placeholder="Lookup a resource by MRN"
                   type="text"
                   value={mrn}
-                  onChange={(e) => setMrn(e.target.value)}
+                  onChange={(e) => {setReceived(false); setMrn(e.target.value);}}
                   onKeyUp={(e) => e.key === "Enter" && lookup(mrn)}
                 />
                 <Button onClick={(e)=>lookup(mrn)} variant="primary" id="button-addon2">
@@ -59,12 +79,38 @@ export default function LookupComponent() {
             </Row>
           </>
         }
-        { connected > 0 && namespaceInfo && mrn === namespaceInfo.namespace &&
+        { connected > 0 && namespaceInfo && mrn === namespaceInfo.mrnNamespace &&
           <>
             <Row>
               <Namespace namespaceInfo={namespaceInfo!}></Namespace>
             </Row>
+            <Row className="text-start">
+              {
+                childNS.length > 0 &&
+                <>
+                  <h5>Children namespace</h5>
+                  <Accordion>
+                    {
+                      childNS.map((e: NamespaceSyntaxDTO, i: number) => 
+                      <Accordion.Item key={i} eventKey={i.toString()}>
+                      <Accordion.Header>{e.mrnNamespace}</Accordion.Header>
+                      <Accordion.Body>
+                        <Namespace namespaceInfo={e!}></Namespace>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                      )
+                    }
+                  </Accordion>
+                </>
+              }
+            </Row>
           </>
+        }
+        {
+          received && !namespaceInfo && resources.length === 0 &&
+          <Row>
+            <h2>No result from your query "{mrn}"</h2>
+          </Row>
         }
         { connected < 0 &&
           <Row style={{ backgroundColor: "red"}}>

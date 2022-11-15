@@ -19,19 +19,19 @@ import { OwnerDTO } from './owner-dto';
  */
 export interface SyntaxCreationDTO {
     /**
-     * 
+     * The MRN namespace that the syntax describes
      * @type {string}
      * @memberof SyntaxCreationDTO
      */
     namespace?: string;
     /**
-     * 
+     * The parent MRN namespace that the syntax is a subset of
      * @type {string}
      * @memberof SyntaxCreationDTO
      */
     parentNamespace?: string;
     /**
-     * 
+     * The ABNF syntax of the MRN namespace
      * @type {string}
      * @memberof SyntaxCreationDTO
      */

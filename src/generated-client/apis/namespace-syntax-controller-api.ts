@@ -17,6 +17,7 @@ import { Configuration } from '../configuration';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
 import { NamespaceSyntaxDTO } from '../models';
+import { PageNamespaceSyntaxDTO } from '../models';
 import { SyntaxCreationDTO } from '../models';
 import { SyntaxCreationResult } from '../models';
 /**
@@ -26,7 +27,7 @@ import { SyntaxCreationResult } from '../models';
 export const NamespaceSyntaxControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 
+         * Creates a new MRN namespace syntax and returns an ID that can be used to retrieve the status of the creation
          * @param {SyntaxCreationDTO} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -59,8 +60,110 @@ export const NamespaceSyntaxControllerApiAxiosParamCreator = function (configura
             localVarUrlObj.search = (new URLSearchParams(query)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers!['Content-Type'] === 'application/json';
+            const needsSerialization = (typeof body !== "string") || (localVarRequestOptions.headers && localVarRequestOptions.headers['Content-Type'] === 'application/json');
             localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns a page of all registered syntax definitions
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllNamespaceSyntaxes: async (page?: number, size?: number, sort?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/syntax/all`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions :AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+            if (sort) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                query.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.params) {
+                query.set(key, options.params[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns a page of all syntax definitions that are registered under the given MRN namespace
+         * @param {string} namespace 
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllNamespaceSyntaxesUnderNamespace: async (namespace: string, page?: number, size?: number, sort?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'namespace' is not null or undefined
+            if (namespace === null || namespace === undefined) {
+                throw new RequiredError('namespace','Required parameter namespace was null or undefined when calling getAllNamespaceSyntaxesUnderNamespace.');
+            }
+            const localVarPath = `/syntax/all/{namespace}`
+                .replace(`{${"namespace"}}`, encodeURIComponent(String(namespace)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions :AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+            if (sort) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                query.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.params) {
+                query.set(key, options.params[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -107,7 +210,7 @@ export const NamespaceSyntaxControllerApiAxiosParamCreator = function (configura
             };
         },
         /**
-         * 
+         * Returns the creation status for the given ID
          * @param {string} creationId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -155,13 +258,44 @@ export const NamespaceSyntaxControllerApiAxiosParamCreator = function (configura
 export const NamespaceSyntaxControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
-         * 
+         * Creates a new MRN namespace syntax and returns an ID that can be used to retrieve the status of the creation
          * @param {SyntaxCreationDTO} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async createNamespaceSyntax(body: SyntaxCreationDTO, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<string>>> {
             const localVarAxiosArgs = await NamespaceSyntaxControllerApiAxiosParamCreator(configuration).createNamespaceSyntax(body, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * Returns a page of all registered syntax definitions
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllNamespaceSyntaxes(page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<PageNamespaceSyntaxDTO>>> {
+            const localVarAxiosArgs = await NamespaceSyntaxControllerApiAxiosParamCreator(configuration).getAllNamespaceSyntaxes(page, size, sort, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * Returns a page of all syntax definitions that are registered under the given MRN namespace
+         * @param {string} namespace 
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllNamespaceSyntaxesUnderNamespace(namespace: string, page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<PageNamespaceSyntaxDTO>>> {
+            const localVarAxiosArgs = await NamespaceSyntaxControllerApiAxiosParamCreator(configuration).getAllNamespaceSyntaxesUnderNamespace(namespace, page, size, sort, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -181,7 +315,7 @@ export const NamespaceSyntaxControllerApiFp = function(configuration?: Configura
             };
         },
         /**
-         * 
+         * Returns the creation status for the given ID
          * @param {string} creationId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -203,13 +337,36 @@ export const NamespaceSyntaxControllerApiFp = function(configuration?: Configura
 export const NamespaceSyntaxControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     return {
         /**
-         * 
+         * Creates a new MRN namespace syntax and returns an ID that can be used to retrieve the status of the creation
          * @param {SyntaxCreationDTO} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async createNamespaceSyntax(body: SyntaxCreationDTO, options?: AxiosRequestConfig): Promise<AxiosResponse<string>> {
             return NamespaceSyntaxControllerApiFp(configuration).createNamespaceSyntax(body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns a page of all registered syntax definitions
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllNamespaceSyntaxes(page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<AxiosResponse<PageNamespaceSyntaxDTO>> {
+            return NamespaceSyntaxControllerApiFp(configuration).getAllNamespaceSyntaxes(page, size, sort, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns a page of all syntax definitions that are registered under the given MRN namespace
+         * @param {string} namespace 
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllNamespaceSyntaxesUnderNamespace(namespace: string, page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig): Promise<AxiosResponse<PageNamespaceSyntaxDTO>> {
+            return NamespaceSyntaxControllerApiFp(configuration).getAllNamespaceSyntaxesUnderNamespace(namespace, page, size, sort, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns the syntax definition that applies to the given MRN
@@ -221,7 +378,7 @@ export const NamespaceSyntaxControllerApiFactory = function (configuration?: Con
             return NamespaceSyntaxControllerApiFp(configuration).getNamespaceSyntaxForMrn(mrn, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Returns the creation status for the given ID
          * @param {string} creationId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -240,7 +397,7 @@ export const NamespaceSyntaxControllerApiFactory = function (configuration?: Con
  */
 export class NamespaceSyntaxControllerApi extends BaseAPI {
     /**
-     * 
+     * Creates a new MRN namespace syntax and returns an ID that can be used to retrieve the status of the creation
      * @param {SyntaxCreationDTO} body 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -248,6 +405,31 @@ export class NamespaceSyntaxControllerApi extends BaseAPI {
      */
     public async createNamespaceSyntax(body: SyntaxCreationDTO, options?: AxiosRequestConfig) : Promise<AxiosResponse<string>> {
         return NamespaceSyntaxControllerApiFp(this.configuration).createNamespaceSyntax(body, options).then((request) => request(this.axios, this.basePath));
+    }
+    /**
+     * Returns a page of all registered syntax definitions
+     * @param {number} [page] Zero-based page index (0..N)
+     * @param {number} [size] The size of the page to be returned
+     * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NamespaceSyntaxControllerApi
+     */
+    public async getAllNamespaceSyntaxes(page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig) : Promise<AxiosResponse<PageNamespaceSyntaxDTO>> {
+        return NamespaceSyntaxControllerApiFp(this.configuration).getAllNamespaceSyntaxes(page, size, sort, options).then((request) => request(this.axios, this.basePath));
+    }
+    /**
+     * Returns a page of all syntax definitions that are registered under the given MRN namespace
+     * @param {string} namespace 
+     * @param {number} [page] Zero-based page index (0..N)
+     * @param {number} [size] The size of the page to be returned
+     * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof NamespaceSyntaxControllerApi
+     */
+    public async getAllNamespaceSyntaxesUnderNamespace(namespace: string, page?: number, size?: number, sort?: Array<string>, options?: AxiosRequestConfig) : Promise<AxiosResponse<PageNamespaceSyntaxDTO>> {
+        return NamespaceSyntaxControllerApiFp(this.configuration).getAllNamespaceSyntaxesUnderNamespace(namespace, page, size, sort, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * Returns the syntax definition that applies to the given MRN
@@ -260,7 +442,7 @@ export class NamespaceSyntaxControllerApi extends BaseAPI {
         return NamespaceSyntaxControllerApiFp(this.configuration).getNamespaceSyntaxForMrn(mrn, options).then((request) => request(this.axios, this.basePath));
     }
     /**
-     * 
+     * Returns the creation status for the given ID
      * @param {string} creationId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

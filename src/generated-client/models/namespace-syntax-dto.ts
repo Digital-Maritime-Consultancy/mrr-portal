@@ -23,7 +23,7 @@ export interface NamespaceSyntaxDTO {
      * @type {string}
      * @memberof NamespaceSyntaxDTO
      */
-    namespace?: string;
+    mrnNamespace?: string;
     /**
      * The ABNF syntax
      * @type {string}
@@ -41,7 +41,7 @@ export interface NamespaceSyntaxDTO {
      * @type {OwnerDTO}
      * @memberof NamespaceSyntaxDTO
      */
-    namespaceOwner?: OwnerDTO;
+    owner?: OwnerDTO;
     /**
      * The unique ID of the namespace syntax
      * @type {number}
