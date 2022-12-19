@@ -72,7 +72,7 @@ export default function LookupComponent() {
           </InputGroup>
           </Form>
         </Row>
-        { connected > 0 && resources.length > 0 && namespaceInfo &&
+        { connected > 0 && resources.length > 0 &&
           <>
             <Row>
               <Resource resources={resources} mrn={mrn} namespaceInfo={namespaceInfo!}></Resource>

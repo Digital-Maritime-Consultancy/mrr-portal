@@ -52,7 +52,7 @@ export default function Resource({resources, mrn, namespaceInfo}: IResourceProp)
                     
                     <div className="p-3 fw-light">
                         A physical or virtual entity associated with MRN and version.
-                        The MRN of the the resource complies with the <a className={"fw-bold"} onClick={handleShow}>{namespaceInfo?.mrnNamespace} namespace syntax</a>
+                        {/*The MRN of the the resource complies with the <a className={"fw-bold"} onClick={handleShow}>{namespaceInfo?.mrnNamespace} namespace syntax</a>*/}
                     </div>
                 </Row>
                 <Row>
