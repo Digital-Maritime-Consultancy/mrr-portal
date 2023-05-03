@@ -32,6 +32,11 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+## Feature
+
+* MRN namespace and resource search over single input
+
+* Query parameter support (e.g., https://mrr.test?mrn=urn:mrn)
 
 ## Acknowledgement
 This development is a part of the project titled “Development of Open Platform Technologies for Smart Maritime Safety and Industries” funded by the Korea Research Institute of Ships and Ocean Engineering (PES4070).
