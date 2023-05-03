@@ -5,8 +5,12 @@ import Namespace from "./namespace";
 import Resource from "./resource";
 import * as Icon from 'react-bootstrap-icons';
 
-export default function LookupComponent() {
-  const [mrn, setMrn] = useState("");
+export interface ILookupComponentProp{
+  givenMrn: string;
+}
+
+export default function LookupComponent({givenMrn}: ILookupComponentProp) {
+  const [mrn, setMrn] = useState(givenMrn);
   const [resources, setResources] = useState<MaritimeResourceDTO[]>([]);
   const [connected, setConnected] = useState(0);
   const [namespaceInfo, setNamespaceInfo] = useState<NamespaceSyntaxDTO | undefined>();
@@ -28,6 +32,13 @@ export default function LookupComponent() {
     }
   }
 
+  useEffect( () => {
+    if (givenMrn.length && !received) {
+      setMrn(givenMrn);
+      lookup(givenMrn);
+    }
+  }, [givenMrn]);
+
   const lookup = (mrn: string) => {
     if (mrn.length && connected >= 0) {
       // initialize query results
@@ -38,11 +49,13 @@ export default function LookupComponent() {
       resourceApiHandler.getAllResourcesForMrn(mrn)
         .then((res: any) => {setConnected(1); return res.data.content;})
         .then((data: MaritimeResourceDTO[]) => setResources(data))
+        .then(() => setReceived(true))
         .catch(() => {setConnected(-1); setResources([])});
       syntaxApiHandler.getAllNamespaceSyntaxesUnderNamespace(mrn)
       .then(value => fetchNamespaceInfo(mrn, value.data))
+      .then(() => setReceived(true))
       .catch(() => setNamespaceInfo(undefined));
-      setReceived(true);
+      
     } else {
       setResources([]);
       setNamespaceInfo(undefined);

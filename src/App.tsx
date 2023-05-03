@@ -6,10 +6,11 @@ import { Footer } from './routes/components/footer';
 import LookupComponent from './routes/lookup';
 import keycloak from './auth/mrrKeycloak';
 import { SubmitResult } from './routes/components/submitResult';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ProtectedRoute } from './routes/components/protectedRoute';
 import { NamespaceRegistration } from './routes/components/namespaceRegistration';
 import { ResourceRegistration } from './routes/components/resourceRegistration';
+import { useSearchParams } from 'react-router-dom';
 
 export enum Mode{
   LOOKUP = 0,
@@ -28,6 +29,15 @@ export interface IContext {
 
 function App() {
   const [context, setContext] = useState<IContext>({mode: Mode.LOOKUP, namespace: "", mrn: ""});
+  const [searchParams, setSearchParams ] = useSearchParams();
+  const [mrn, setMrn] = useState("");
+
+  useEffect( () => {
+    // fetching search parameters from URL
+    if (searchParams.get("mrn")) {
+      setMrn(searchParams.get("mrn")!);
+    }
+  }, []);
 
   return (
     <div className="App" style={{ paddingTop: "3rem"}}>
@@ -37,7 +47,7 @@ function App() {
         <Row>
           {
             context.mode === Mode.LOOKUP ?
-            <LookupComponent /> :
+            <LookupComponent givenMrn={mrn}/> :
             context.mode === Mode.REGISTER_RESOURCE ?
             <ProtectedRoute><ResourceRegistration context={context} setContext={setContext}/></ProtectedRoute> :
             context.mode === Mode.REGISTER_NAMESPACE ?
